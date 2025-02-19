@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>bmc-code-style</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <!-- This creates a cyclic dependency between this project and the parent -->
+    <!-- Thou not ideal; once stabilized, this project probably won't change often-->
+    <parent>
+        <groupId>com.bmc.platform</groupId>
+        <artifactId>bmc-bom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <!-- This eliminates cyclic dependency caused by using parent pom for dependencies and build alignment -->
+                    <!-- A "none" phase voids the execution of this plugin altogether -->
+                    <execution>
+                        <id>validate</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <!-- This eliminates cyclic dependency caused by using parent pom for dependencies and build alignment -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <!-- Configuration to allow including .gitignore file into this project's JAR-->
+                <configuration>
+                    <addDefaultExcludes>false</addDefaultExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <includeEmptyDirs>false</includeEmptyDirs>
+                            <addDefaultExcludes>false</addDefaultExcludes>
+                            <resources>
+                                <!-- These resources will be included in the final JAR produced by this project -->
+                                <!-- They are used across all projects, don't include one-off requirements -->
+                                <resource>
+                                    <directory>${basedir}</directory>
+                                    <includes>
+                                        <include>.gitignore</include>
+                                        <include>.dockerignore</include>
+                                        <include>.editorconfig</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
