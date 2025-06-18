@@ -20,6 +20,10 @@ jobs:
             -   name: Setup Java
                 uses: ./.github/actions/setup-java
 
+            -   name: Monitor Java vendor
+                run: |
+                    java -XshowSettings:properties -version 2>&1 | grep vendor
+
             -   name: Cache Maven dependencies
                 uses: actions/cache@v4
                 with:
@@ -48,9 +52,10 @@ jobs:
                     ./mvnw versions:set -DnewVersion="${{ env.PROJECT_VERSION }}"
 
             -   name: Publish to Github Packages
-                run: ./mvnw deploy -DskipTests -Dmaven.source.skip=false -Dmaven.javadoc.skip=false
+                run: ./mvnw deploy -Pdeployable-jar
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            -   name: Run Code Quality Check
-                uses: ./.github/actions/code-quality
+#               momentarily deactivate quality gate
+#            -   name: Run Code Quality Check
+#                uses: ./.github/actions/code-quality

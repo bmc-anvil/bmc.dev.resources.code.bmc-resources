@@ -63,6 +63,6 @@ jobs:
                     ./mvnw versions:set -DnewVersion="${{ env.SELECTED_VERSION }}"
 
             -   name: Publish to Github Packages
-                run: ./mvnw deploy -DskipTests -Dmaven.source.skip=false -Dmaven.javadoc.skip=false
+                run: ./mvnw deploy -Pdeployable-jar
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
