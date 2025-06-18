@@ -3,14 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>bmc-code-style</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1-local</version>
 
     <!-- This creates a cyclic dependency between this project and the parent -->
     <!-- Thou not ideal; once stabilized, this project probably won't change often-->
     <parent>
         <groupId>com.bmc.platform</groupId>
         <artifactId>bmc-bom</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.0.1-local</version>
     </parent>
 
     <build>
