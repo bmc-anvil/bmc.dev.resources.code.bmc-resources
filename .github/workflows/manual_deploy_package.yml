@@ -46,13 +46,11 @@ jobs:
             -   name: Setup Java
                 uses: ./.github/actions/setup-java
 
-            -   name: Cache Maven dependencies
-                uses: actions/cache@v4
+            -   name: Setup Maven
+                uses: ./.github/actions/setup-maven
                 with:
-                    path: ~/.m2
-                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-                    restore-keys: |
-                        ${{ runner.os }}-maven-
+                    packages_user: ${{secrets.PACKAGES_USER}}
+                    packages_token_ro: ${{secrets.PACKAGES_TOKEN_RO}}
 
             -   name: build and test
                 continue-on-error: true

@@ -20,36 +20,15 @@ jobs:
             -   name: Setup Java
                 uses: ./.github/actions/setup-java
 
-            -   name: Monitor Java vendor
-                run: |
-                    java -XshowSettings:properties -version 2>&1 | grep vendor
-
-            -   name: Cache Maven dependencies
-                uses: actions/cache@v4
+            -   name: Setup Maven
+                uses: ./.github/actions/setup-maven
                 with:
-                    path: ~/.m2
-                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-                    restore-keys: |
-                        ${{ runner.os }}-maven-
+                    packages_user: ${{secrets.PACKAGES_USER}}
+                    packages_token_ro: ${{secrets.PACKAGES_TOKEN_RO}}
 
-            -   name: build and test
+            -   name: Build and Test
                 continue-on-error: true
                 run: ./mvnw clean verify
-
-            -   name: version setup (Tag or Commit Hash)
-                id: git-info
-                run: |
-                    TAG=$(git describe --tags --exact-match 2>/dev/null || echo "")
-                    if [ -z "$TAG" ]; then
-                      GIT_HASH=$(git rev-parse --short HEAD)
-                      echo "PROJECT_VERSION=$GIT_HASH" >> $GITHUB_ENV
-                    else
-                      echo "PROJECT_VERSION=$TAG" >> $GITHUB_ENV
-                    fi
-
-            -   name: Update Maven version with Git tag or hash
-                run: |
-                    ./mvnw versions:set -DnewVersion="${{ env.PROJECT_VERSION }}"
 
             -   name: Publish to Github Packages
                 run: ./mvnw deploy -Pdeployable-jar

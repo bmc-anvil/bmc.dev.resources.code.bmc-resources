@@ -10,7 +10,7 @@
     <parent>
         <groupId>com.bmc.platform</groupId>
         <artifactId>bmc-bom</artifactId>
-        <version>0.1.0-experimental</version>
+        <version>baf683f</version>
     </parent>
 
     <build>
