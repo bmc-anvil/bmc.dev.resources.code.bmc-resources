@@ -52,7 +52,7 @@ jobs:
                     packages_user: ${{secrets.PACKAGES_USER}}
                     packages_token_ro: ${{secrets.PACKAGES_TOKEN_RO}}
 
-            -   name: build and test
+            -   name: Build and Test
                 continue-on-error: true
                 run: ./mvnw clean verify
 

@@ -10,8 +10,16 @@
     <parent>
         <groupId>com.bmc.platform</groupId>
         <artifactId>bmc-bom</artifactId>
-        <version>baf683f</version>
+        <version>0.3.1-experimental</version>
     </parent>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/bmc-anvil/*</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>

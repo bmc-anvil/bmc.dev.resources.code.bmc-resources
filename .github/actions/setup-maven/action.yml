@@ -20,17 +20,7 @@ runs:
                 <settings>
                     <servers>
                         <server>
-                            <id>bmc-bom</id>
-                            <username>${USERNAME}</username>
-                            <password>${TOKEN}</password>
-                        </server>
-                        <server>
-                            <id>bmc-code-style</id>
-                            <username>${USERNAME}</username>
-                            <password>${TOKEN}</password>
-                        </server>
-                        <server>
-                            <id>bmc-logging-json</id>
+                            <id>github</id>
                             <username>${USERNAME}</username>
                             <password>${TOKEN}</password>
                         </server>
