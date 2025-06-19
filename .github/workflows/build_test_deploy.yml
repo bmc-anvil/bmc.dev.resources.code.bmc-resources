@@ -26,7 +26,7 @@ jobs:
                 uses: ./.github/actions/setup-maven
                 with:
                     packages_user: ${{secrets.PACKAGES_USER}}
-                    packages_token_ro: ${{secrets.PACKAGES_TOKEN_RO}}
+                    packages_token: ${{secrets.PACKAGES_TOKEN_RW}}
 
             -   name: Build and Test
                 continue-on-error: true
@@ -35,7 +35,7 @@ jobs:
             -   name: Publish to Github Packages
                 run: ./mvnw deploy -Pdeployable-jar
                 env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    GITHUB_TOKEN: ${{ secrets.PACKAGES_TOKEN_RW }}
 
 #               momentarily deactivate quality gate
 #            -   name: Run Code Quality Check

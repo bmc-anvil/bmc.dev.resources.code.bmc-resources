@@ -5,7 +5,7 @@ inputs:
     packages_user:
         required: true
         description: 'packages user from workflow'
-    packages_token_ro:
+    packages_token:
         required: true
         description: 'read-only packages token from workflow'
 
@@ -29,7 +29,7 @@ runs:
                 EOF
             env:
                 USERNAME: ${{ inputs.packages_user }}
-                TOKEN: ${{ inputs.packages_token_ro }}
+                TOKEN: ${{ inputs.packages_token }}
 
         -   name: Cache Maven dependencies
             uses: actions/cache@v4
