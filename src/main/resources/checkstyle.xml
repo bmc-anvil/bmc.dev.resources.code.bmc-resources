@@ -355,6 +355,7 @@
         <module name="CommentsIndentation">
             <property name="tokens" value="SINGLE_LINE_COMMENT, BLOCK_COMMENT_BEGIN"/>
         </module>
+
         <!-- https://checkstyle.org/filters/suppressionxpathfilter.html -->
         <module name="SuppressionXpathFilter">
             <property name="file" value="${org.checkstyle.bmc.suppressionxpathfilter.config}" default="checkstyle-xpath-suppressions.xml"/>
@@ -372,6 +373,17 @@
             <property name="checkFormat" value="$1"/>
             <!-- The check is suppressed in the next line of code after the comment -->
             <property name="influenceFormat" value="1"/>
+        </module>
+
+        <module name="NewlineAtEndOfFile"/>
+        <module name="FinalLocalVariable">
+            <property name="tokens" value="VARIABLE_DEF,PARAMETER_DEF"/>
+            <property name="validateEnhancedForLoopVariable" value="true"/>
+        </module>
+        <module name="RegexpSingleline">
+            <property name="format" value="\s+$"/>
+            <property name="message" value="Line has trailing whitespace."/>
+            <property name="ignoreComments" value="true"/>
         </module>
     </module>
 </module>
