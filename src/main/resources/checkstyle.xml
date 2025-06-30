@@ -59,6 +59,12 @@
         <property name="ignorePattern" value="^package.*|^import.*|href\s*=\s*&quot;[^&quot;]*&quot;|http://|https://|ftp://"/>
     </module>
 
+    <module name="NewlineAtEndOfFile"/>
+    <module name="RegexpSingleline">
+        <property name="format" value="^[ \t]+$|[ \t]+$"/>
+        <property name="message" value="Trailing whitespace or whitespace on empty lines."/>
+    </module>
+
     <module name="TreeWalker">
         <module name="OuterTypeFilename"/>
 
@@ -375,15 +381,9 @@
             <property name="influenceFormat" value="1"/>
         </module>
 
-        <module name="NewlineAtEndOfFile"/>
         <module name="FinalLocalVariable">
             <property name="tokens" value="VARIABLE_DEF,PARAMETER_DEF"/>
             <property name="validateEnhancedForLoopVariable" value="true"/>
-        </module>
-        <module name="RegexpSingleline">
-            <property name="format" value="\s+$"/>
-            <property name="message" value="Line has trailing whitespace."/>
-            <property name="ignoreComments" value="true"/>
         </module>
     </module>
 </module>
