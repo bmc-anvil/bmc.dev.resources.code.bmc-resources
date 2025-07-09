@@ -13,14 +13,6 @@
         <version>0.3.2-experimental</version>
     </parent>
 
-    <repositories>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/bmc-anvil/*</url>
-        </repository>
-    </repositories>
-
     <build>
         <plugins>
             <plugin>
