@@ -27,6 +27,9 @@
                         <phase>none</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <configLocation>${project.basedir}/src/main/resources/checkstyle.xml</configLocation>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
