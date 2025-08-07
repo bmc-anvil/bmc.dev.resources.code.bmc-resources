@@ -8,9 +8,9 @@
     <!-- This creates a cyclic dependency between this project and the parent -->
     <!-- Thou not ideal; once stabilized, this project probably won't change often-->
     <parent>
-        <groupId>com.bmc.platform</groupId>
-        <artifactId>bmc-bom</artifactId>
-        <version>0.8.0-experimental</version>
+        <groupId>bmc.dev.templates.maven</groupId>
+        <artifactId>bmc-parent</artifactId>
+        <version>1.0.0</version>
     </parent>
 
     <build>

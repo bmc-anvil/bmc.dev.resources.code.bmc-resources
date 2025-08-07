@@ -15,7 +15,7 @@ on:
 
 jobs:
     build-test-publish:
-        uses: bmc-anvil/.github/workflows/publish_package.yml@master
+        uses: bmc-anvil/.github/.github/workflows/publish_package.yml@master
         secrets:
             PACKAGES_USER: ${{secrets.PACKAGES_USER}}
             PACKAGES_TOKEN_RW: ${{secrets.PACKAGES_TOKEN_RW}}
@@ -25,7 +25,5 @@ jobs:
             packages: write
             security-events: write
         with:
-          tag_or_hash: ${{ inputs.tag_or_hash }}
-          deploy_package: true
-          checkstyle_skip: false
-
+            tag_or_hash: ${{ inputs.tag_or_hash }}
+            deploy_package: true
