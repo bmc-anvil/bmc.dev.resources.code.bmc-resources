@@ -2,8 +2,6 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>bmc-code-style</artifactId>
-    <version>0.0.1-local</version>
 
     <!-- This creates a cyclic dependency between this project and the parent -->
     <!-- Thou not ideal; once stabilized, this project probably won't change often-->
@@ -12,6 +10,16 @@
         <artifactId>bmc-parent</artifactId>
         <version>1.0.0</version>
     </parent>
+
+    <groupId>bmc.dev.resources.code</groupId>
+    <artifactId>bmc-code-style</artifactId>
+    <version>0.0.1-local</version>
+
+    <properties>
+        <!-- Keep properties in alphabetical order  -->
+        <!-- GitHub Repositories Config-->
+        <github.repository>${project.groupId}.${project.artifactId}</github.repository>
+    </properties>
 
     <build>
         <plugins>
