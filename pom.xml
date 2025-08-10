@@ -8,7 +8,7 @@
     <parent>
         <groupId>bmc.dev.templates.maven</groupId>
         <artifactId>bmc-parent</artifactId>
-        <version>1.0.1</version>
+        <version>dfee597</version>
     </parent>
 
     <groupId>bmc.dev.resources.code</groupId>
