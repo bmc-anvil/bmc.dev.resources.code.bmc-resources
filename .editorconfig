@@ -11,7 +11,7 @@ insert_final_newline        = true
 max_line_length             = 150
 trim_trailing_whitespace    = true
 ij_formatter_off_tag        = @formatter:off
-ij_formatter_on_tag         = @formatter : on
+ij_formatter_on_tag         = @formatter:on
 ij_formatter_tags_enabled   = true
 ij_smart_tabs               = false
 ij_visual_guides            = 120 , 140
@@ -370,7 +370,7 @@ ij_shell_redirect_followed_by_space    = false
 ij_shell_switch_cases_indented         = false
 ij_shell_use_unix_line_separator       = true
 
-[{*.har,*.jsb2,*.jsb3,*.json,*.jsonc,*.postman_collection,*.postman_collection.json,*.postman_environment,*.postman_environment.json,.babelrc,.eslintrc,.prettierrc,.stylelintrc,.ws-context,jest.config}]
+[{*.har,*.jsb2,*.jsb3,*.json,*.jsonc,*.postman_collection,*.postman_environment,.babelrc,.eslintrc,.prettierrc,.stylelintrc,.ws-context,jest.config}]
 ij_json_array_wrapping              = split_into_lines
 ij_json_keep_blank_lines_in_code    = 0
 ij_json_keep_indents_on_empty_lines = false
