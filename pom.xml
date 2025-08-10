@@ -12,13 +12,13 @@
     <description>
         Resources comprising code style, checkstyle, ignore files et als, common for all projects.
     </description>
+    <url>https://www.bmc-anvil.com/</url>
 
     <properties>
         <!-- Keep properties in alphabetical order  -->
         <!-- Configuration  -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <skipITs>true</skipITs>
 
         <!-- GitHub Repositories -->
         <github.org>bmc-anvil</github.org>
@@ -294,4 +294,43 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <!-- This profile is executed to deploy "libraries" or "modules" with corresponding documentation and sources to a given repository. -->
+        <!-- As not every project is a library, this configuration needs not be part of the general configuration. -->
+        <profile>
+            <id>deployable-jar</id>
+            <activation>
+                <property>
+                    <name>deployable-jar</name>
+                </property>
+            </activation>
+            <properties>
+                <maven.source.skip>false</maven.source.skip>
+                <maven.javadoc.skip>false</maven.javadoc.skip>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>${github.packages.id}</id>
+                    <name>${github.packages.name}</name>
+                    <url>${github.packages.base-url}/${github.org}/${github.repository}</url>
+                </repository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
