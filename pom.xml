@@ -252,9 +252,10 @@
                             <outputDirectory>${basedir}/target/classes</outputDirectory>
                             <includeEmptyDirs>false</includeEmptyDirs>
                             <addDefaultExcludes>false</addDefaultExcludes>
+                            <!-- These resources will be included in the final JAR produced by this project -->
+                            <!-- They are used across all projects, don't include one-off requirements -->
                             <resources>
-                                <!-- These resources will be included in the final JAR produced by this project -->
-                                <!-- They are used across all projects, don't include one-off requirements -->
+                                <!-- Files to include -->
                                 <resource>
                                     <directory>${basedir}</directory>
                                     <includes>
@@ -262,6 +263,23 @@
                                         <include>.dockerignore</include>
                                         <include>.editorconfig</include>
                                         <include>checkstyle.xml</include>
+                                        <include>LICENSE</include>
+                                        <include>mvnw</include>
+                                    </includes>
+                                </resource>
+                                <!-- Folders to include -->
+                                <resource>
+                                    <directory>${basedir}/.github</directory>
+                                    <targetPath>.github</targetPath>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${basedir}/.mvn</directory>
+                                    <targetPath>.mvn</targetPath>
+                                    <includes>
+                                        <include>**/*</include>
                                     </includes>
                                 </resource>
                             </resources>
