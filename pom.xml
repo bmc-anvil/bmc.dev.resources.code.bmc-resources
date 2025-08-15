@@ -138,29 +138,6 @@
                                 <rules>
                                     <requireJavaVendor>
                                         <!-- java -XshowSettings:properties -version 2>&1 | grep vendor -->
-                                        <excludes>
-                                            <!-- commercial vendors to exclude -->
-                                            <exclude>Oracle</exclude>
-                                            <exclude>IBM</exclude>
-                                            <exclude>Microsoft</exclude>
-                                            <exclude>SAP</exclude>
-                                            <exclude>Huawei</exclude>
-                                            <exclude>Amazon Corretto</exclude>
-                                            <exclude>Oracle JDK</exclude>
-                                            <exclude>Amazon</exclude>
-                                            <exclude>Microsoft Build of OpenJDK</exclude>
-                                            <!-- Azul Zulu might be commercial depending on the version -->
-                                            <exclude>Azul Systems</exclude>
-
-                                            <!-- open-source vendors to exclude -->
-                                            <include>Alibaba Dragonwell</include>
-                                            <include>AdoptOpenJDK</include>
-                                            <include>Temurin</include>
-                                            <include>Eclipse Temurin</include>
-                                            <include>Zulu</include>
-                                            <include>Red Hat</include>
-                                            <include>BellSoft</include>
-                                        </excludes>
                                         <message>To build this project one of the JDK in the "includes" list has to be used</message>
                                         <includes>
                                             <!-- commercial vendors to include: DO NOT include any commercial vendors -->
@@ -197,7 +174,7 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${javadoc-plugin.version}</version>
                     <configuration>
-                        <source>${maven.compiler.release}</source>
+                        <release>${maven.compiler.release}</release>
                         <doclint>none</doclint>
                         <additionalJOptions>
                             <additionalJOption>-Xdoclint:none</additionalJOption>
