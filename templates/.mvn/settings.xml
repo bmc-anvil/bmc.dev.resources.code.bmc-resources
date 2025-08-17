@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <!-- Local repository location -->
+    <localRepository>${user.home}/.m2/repository</localRepository>
+
+    <!-- Additional Server/s configurations -->
+    <servers>
+        <!-- GitHub Package Registry server configuration -->
+        <server>
+            <id>github</id>
+            <!-- Do not commit your use name-->
+            <username>${USER_NAME}</username>
+            <!-- Do not commit your personal token. If you do, rever the commit and rotate your token-->
+            <password>${USER_TOKEN}</password>
+        </server>
+    </servers>
+
+    <!-- This profiles section is to include other repositories / registries by default in all projects -->
+    <profiles>
+        <profile>
+            <id>github-packages</id>
+            <!-- Additional Repositories -->
+            <repositories>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub Packages</name>
+                    <url>https://maven.pkg.github.com/bmc-anvil/*</url>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <!-- Activate the profile by default to get all additional repositories -->
+    <activeProfiles>
+        <activeProfile>github-packages</activeProfile>
+    </activeProfiles>
+</settings>

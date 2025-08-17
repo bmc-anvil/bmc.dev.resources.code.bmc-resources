@@ -26,5 +26,5 @@ jobs:
             security-events: write
         with:
             tag_or_hash: ${{ inputs.tag_or_hash }}
-            deploy_package: true
+            deploy_package: false
             checkstyle_skip: false
