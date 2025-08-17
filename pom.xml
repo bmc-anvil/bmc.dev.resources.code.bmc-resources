@@ -281,6 +281,9 @@
                                     <includes>
                                         <include>**/*</include>
                                     </includes>
+                                    <excludes>
+                                        <exclude>**/settings.xml</exclude>
+                                    </excludes>
                                 </resource>
                             </resources>
                         </configuration>
