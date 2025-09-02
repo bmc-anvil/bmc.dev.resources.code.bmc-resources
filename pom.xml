@@ -6,7 +6,7 @@
     <parent>
         <groupId>bmc.dev.resources.code</groupId>
         <artifactId>bmc-resources-parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>bmc-resources</artifactId>
