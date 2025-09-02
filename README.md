@@ -34,7 +34,10 @@ elsewhere.
 
 ### Not to be included in a package:
 
-Anything not included in the above list is of no interest or are files / folders kept for historical or bookkeeping reasons.
+Anything not included in the above list is of no interest or are files / folders kept for historical / configuration or bookkeeping reasons, i.e.,
+[bare_metal_code_style_intellij.xml](bare_metal_code_style_intellij.xml)
+
+`bare_metal_code_style_intellij.xml` are my intellij code-style settings, kept here for easy recovery or sharing if anyone is interested.
 
 # Why
 
