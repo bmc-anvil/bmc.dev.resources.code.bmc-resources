@@ -3,274 +3,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>bmc.dev.resources.code</groupId>
+    <parent>
+        <groupId>bmc.dev.resources.code</groupId>
+        <artifactId>bmc-resources-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
     <artifactId>bmc-resources</artifactId>
     <version>bmc-local</version>
     <packaging>jar</packaging>
 
     <name>BMC - BMC Resources</name>
-    <description>
-        Resources comprising code style, checkstyle, ignore files et als, common for all projects.
-    </description>
-    <url>https://www.bmc-anvil.com/</url>
-
-    <properties>
-        <!-- Keep properties in alphabetical order  -->
-        <!-- Configuration  -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <!-- GitHub Repositories -->
-        <github.org>bmc-anvil</github.org>
-        <github.packages.id>github</github.packages.id>
-        <github.packages.name>GitHub Packages</github.packages.name>
-        <github.packages.base-url>https://maven.pkg.github.com</github.packages.base-url>
-        <github.repository>${project.groupId}.${project.artifactId}</github.repository>
-
-        <!-- Java / Maven Configuration  -->
-        <maven.compiler.parameters>true</maven.compiler.parameters>
-        <maven.compiler.release>24</maven.compiler.release>
-        <maven.compiler.proc>full</maven.compiler.proc>
-        <maven.min.version>3.9.9</maven.min.version>
-
-        <!-- Plugins Versions  -->
-        <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
-        <compiler-plugin.version>3.14.0</compiler-plugin.version>
-        <deploy-plugin.version>3.1.4</deploy-plugin.version>
-        <enforcer-plugin.version>3.6.1</enforcer-plugin.version>
-        <jar-plugin.version>3.4.2</jar-plugin.version>
-        <javadoc-plugin.version>3.11.2</javadoc-plugin.version>
-        <resources-plugin.version>3.3.1</resources-plugin.version>
-        <source-plugin.version>3.3.1</source-plugin.version>
-
-        <!-- Versions -->
-        <checkstyle.version>11.0.0</checkstyle.version>
-    </properties>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Johnny X</name>
-            <organization>BareMetalCode</organization>
-            <organizationUrl>https://www.baremetalcode.com/</organizationUrl>
-        </developer>
-        <developer>
-            <name>BareMetalCode Devs</name>
-            <organization>BareMetalCode</organization>
-            <organizationUrl>https://www.baremetalcode.com/</organizationUrl>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git://github.com/${github.org}/${github.repository}.git</connection>
-        <developerConnection>scm:git:ssh://github.com:${github.org}/${github.repository}.git</developerConnection>
-        <url>${project.url}</url>
-    </scm>
+    <description>Resources comprising code style, checkstyle, ignore files et als, common for all projects.</description>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <!-- Apache Maven build Plugins -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>${checkstyle-plugin.version}</version>
-                    <dependencies>
-                        <!-- use latest checkstyle version-->
-                        <dependency>
-                            <groupId>com.puppycrawl.tools</groupId>
-                            <artifactId>checkstyle</artifactId>
-                            <version>${checkstyle.version}</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <configLocation>${project.basedir}/checkstyle.xml</configLocation>
-                        <outputFile>${project.build.directory}/checkstyle-result.sarif</outputFile>
-                        <outputFileFormat>sarif</outputFileFormat>
-                        <excludeGeneratedSources>true</excludeGeneratedSources>
-                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        <inputEncoding>UTF-8</inputEncoding>
-                        <outputEncoding>UTF-8</outputEncoding>
-                        <consoleOutput>true</consoleOutput>
-                        <linkXRef>false</linkXRef>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${compiler-plugin.version}</version>
-                    <!--
-                        Java >=23 requires explicit configuration of annotation processing.
-                        Add the proper configuration to children of this parent POM.
-                        I.e., the BMC Quarkus framework's parent POM.
-                    -->
-                    <configuration/>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${deploy-plugin.version}</version>
-                    <configuration>
-                        <deployAtEnd>true</deployAtEnd>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${enforcer-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>enforce</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <requireJavaVendor>
-                                        <!-- java -XshowSettings:properties -version 2>&1 | grep vendor -->
-                                        <message>To build this project one of the JDK in the "includes" list has to be used</message>
-                                        <includes>
-                                            <!-- commercial vendors to include: DO NOT include any commercial vendors -->
-                                            <!-- open-source vendors to include -->
-                                            <include>OpenJDK</include>
-                                            <include>openjdk</include>
-                                            <include>GraalVM</include>
-                                            <!-- need to include Oracle as an OSS vendor given they provide a GNU GPL build of the JDK  -->
-                                            <include>Oracle Corporation</include>
-                                            <!-- workaround for missing java.vendor property in some OpenJDK builds-->
-                                            <include>N/A</include>
-                                        </includes>
-                                    </requireJavaVendor>
-                                    <requireJavaVersion>
-                                        <message>To build this project JDK >=${maven.compiler.release} is required. Please install it.</message>
-                                        <version>${maven.compiler.release}</version>
-                                    </requireJavaVersion>
-                                    <requireMavenVersion>
-                                        <message>To build this project Maven >=${maven.min.version} is required. Please install it.</message>
-                                        <version>${maven.min.version}</version>
-                                    </requireMavenVersion>
-                                </rules>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>${jar-plugin.version}</version>
-                    <!-- Configuration to allow including .gitignore file into this project's JAR-->
-                    <configuration>
-                        <addDefaultExcludes>false</addDefaultExcludes>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${javadoc-plugin.version}</version>
-                    <configuration>
-                        <release>${maven.compiler.release}</release>
-                        <doclint>none</doclint>
-                        <additionalJOptions>
-                            <additionalJOption>-Xdoclint:none</additionalJOption>
-                        </additionalJOptions>
-                        <failOnError>false</failOnError>
-                        <skip>false</skip>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                            <phase>package</phase>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>${resources-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>copy-resources</id>
-                            <phase>generate-resources</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>${basedir}/target/classes</outputDirectory>
-                                <includeEmptyDirs>false</includeEmptyDirs>
-                                <addDefaultExcludes>false</addDefaultExcludes>
-                                <!-- These resources will be included in the final JAR produced by this project -->
-                                <!-- They are used across all projects, don't include one-off requirements -->
-                                <resources>
-                                    <!-- Files to include -->
-                                    <resource>
-                                        <directory>${basedir}</directory>
-                                        <includes>
-                                            <include>.gitignore</include>
-                                            <include>.dockerignore</include>
-                                            <include>.editorconfig</include>
-                                            <include>checkstyle.xml</include>
-                                            <include>LICENSE</include>
-                                            <include>mvnw</include>
-                                        </includes>
-                                    </resource>
-                                    <!-- Folders to include -->
-                                    <resource>
-                                        <directory>${basedir}/templates/.github</directory>
-                                        <targetPath>.github</targetPath>
-                                        <includes>
-                                            <include>**/*</include>
-                                        </includes>
-                                    </resource>
-                                    <resource>
-                                        <directory>${basedir}/templates/.mvn</directory>
-                                        <targetPath>.mvn</targetPath>
-                                        <includes>
-                                            <include>**/*</include>
-                                        </includes>
-                                        <excludes>
-                                            <exclude>**/settings.xml</exclude>
-                                        </excludes>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${source-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                            <phase>package</phase>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <attach>true</attach>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -278,46 +25,55 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <includeEmptyDirs>false</includeEmptyDirs>
+                            <addDefaultExcludes>false</addDefaultExcludes>
+                            <!-- These resources will be included in the final JAR produced by this project -->
+                            <!-- They are used across all projects, don't include one-off requirements -->
+                            <resources>
+                                <!-- Files to include -->
+                                <resource>
+                                    <directory>${basedir}</directory>
+                                    <includes>
+                                        <include>.gitignore</include>
+                                        <include>.dockerignore</include>
+                                        <include>.editorconfig</include>
+                                        <include>checkstyle.xml</include>
+                                        <include>LICENSE</include>
+                                        <include>mvnw</include>
+                                    </includes>
+                                </resource>
+                                <!-- Folders to include -->
+                                <resource>
+                                    <directory>${basedir}/templates/.github</directory>
+                                    <targetPath>.github</targetPath>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${basedir}/templates/.mvn</directory>
+                                    <targetPath>.mvn</targetPath>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>**/settings.xml</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <!-- This profile is executed to deploy "libraries" or "modules" with corresponding documentation and sources to a given repository. -->
-        <!-- As not every project is a library, this configuration needs not be part of the general configuration. -->
-        <profile>
-            <id>deployable-jar</id>
-            <activation>
-                <property>
-                    <name>deployable-jar</name>
-                </property>
-            </activation>
-            <properties>
-                <maven.source.skip>false</maven.source.skip>
-                <maven.javadoc.skip>false</maven.javadoc.skip>
-            </properties>
-            <distributionManagement>
-                <repository>
-                    <id>${github.packages.id}</id>
-                    <name>${github.packages.name}</name>
-                    <url>${github.packages.base-url}/${github.org}/${github.repository}</url>
-                </repository>
-            </distributionManagement>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-deploy-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
