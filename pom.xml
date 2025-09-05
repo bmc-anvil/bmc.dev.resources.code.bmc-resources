@@ -6,21 +6,48 @@
     <parent>
         <groupId>bmc.dev.resources.code</groupId>
         <artifactId>bmc-resources-parent</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>bmc-resources</artifactId>
     <version>bmc-local</version>
-    <packaging>jar</packaging>
+    <packaging>maven-plugin</packaging>
 
     <name>BMC - BMC Resources</name>
-    <description>Resources comprising code style, checkstyle, ignore files et als, common for all projects.</description>
+    <description>BMC Resources comprising code style, checkstyle, ignore files architectural design models et als, common for all projects.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- maven-plugin-plugin 3.13.1, latest for maven 3.9.9, supports bytecode up to version 67 - jdk 23-->
+                    <release>23</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -53,20 +80,34 @@
                                 </resource>
                                 <!-- Folders to include -->
                                 <resource>
-                                    <directory>${basedir}/templates/.github</directory>
+                                    <directory>${basedir}/bmc_assets/templates/.github</directory>
                                     <targetPath>.github</targetPath>
                                     <includes>
                                         <include>**/*</include>
                                     </includes>
                                 </resource>
                                 <resource>
-                                    <directory>${basedir}/templates/.mvn</directory>
+                                    <directory>${basedir}/bmc_assets/templates/.mvn</directory>
                                     <targetPath>.mvn</targetPath>
                                     <includes>
                                         <include>**/*</include>
                                     </includes>
                                     <excludes>
                                         <exclude>**/settings.xml</exclude>
+                                    </excludes>
+                                </resource>
+                                <!-- Architecture Models to include -->
+                                <resource>
+                                    <directory>${basedir}/bmc_assets/architecture_models</directory>
+                                    <targetPath>architecture_models</targetPath>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>*/*.md</exclude>
+                                        <exclude>*.md</exclude>
+                                        <exclude>*.env</exclude>
+                                        <exclude>*.sh</exclude>
                                     </excludes>
                                 </resource>
                             </resources>
