@@ -6,7 +6,7 @@
     <parent>
         <groupId>bmc.dev.resources.code</groupId>
         <artifactId>bmc-resources-parent</artifactId>
-        <version>1.1.0</version>
+        <version>bmc-local</version>
     </parent>
 
     <artifactId>bmc-resources</artifactId>
@@ -14,8 +14,15 @@
     <packaging>maven-plugin</packaging>
 
     <name>BMC - BMC Resources</name>
-    <description>BMC Resources comprising code style, checkstyle, ignore files architectural design models et als, common for all projects.</description>
+    <description>BMC Resources comprising code style, checkstyle, ignore files, architectural design models et als, common for all projects.</description>
 
+    <!--
+        Note:
+        There are mostly no dependencies but the required maven ones, and it is on purpose.
+        Given how core this plugin is, I ended up manually doing a few things to depend on nothing but the language and the build tool.
+        It breaks the spirit of lowering the bar on complexity, but given how little this plugin will change once stable, it should pay off
+        on maintainability cost.
+     -->
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -30,8 +37,13 @@
             <artifactId>maven-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 
@@ -43,6 +55,13 @@
                 <configuration>
                     <!-- maven-plugin-plugin 3.13.1, latest for maven 3.9.9, supports bytecode up to version 67 - jdk 23-->
                     <release>23</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -82,6 +101,13 @@
                                 <resource>
                                     <directory>${basedir}/bmc_assets/templates/.github</directory>
                                     <targetPath>.github</targetPath>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${basedir}/bmc_assets/resources_config</directory>
+                                    <targetPath>resources_config</targetPath>
                                     <includes>
                                         <include>**/*</include>
                                     </includes>
