@@ -1,4 +1,4 @@
-package bmc.dev.resources.code.bmcresources.generators.resources;
+package bmc.dev.resources.code.bmcresources.io;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -16,12 +16,12 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class ResourcesWriter {
 
-    public static void writeResourceFile(final AbstractMojo mojoClass, final Path projectBasePath, final String source, final String target,
+    public static void writeResourceFile(final AbstractMojo mojo, final Path projectBasePath, final String source, final String target,
             final String padding) {
 
-        final Log log = mojoClass.getLog();
+        final Log log = mojo.getLog();
 
-        try (final InputStream sourceStream = mojoClass.getClass().getResourceAsStream("/" + source)) {
+        try (final InputStream sourceStream = mojo.getClass().getResourceAsStream("/" + source)) {
             final String sourcePadded = padding.formatted(source);
 
             if (sourceStream == null) {
@@ -38,10 +38,10 @@ public class ResourcesWriter {
         }
     }
 
-    public static void writeResourceFolder(final AbstractMojo mojoClass, final String sourceFolderInJar, final Path targetFolder) {
+    public static void writeResourceFolder(final AbstractMojo mojo, final String sourceFolderInJar, final Path targetFolder) {
 
-        final URL jarUrl = mojoClass.getClass().getProtectionDomain().getCodeSource().getLocation();
-        final Log log    = mojoClass.getLog();
+        final URL jarUrl = mojo.getClass().getProtectionDomain().getCodeSource().getLocation();
+        final Log log    = mojo.getLog();
 
         try (final FileSystem fs = newFileSystem(Path.of(jarUrl.toURI()), (ClassLoader) null)) {
 
@@ -54,16 +54,15 @@ public class ResourcesWriter {
                     final Path targetPath   = targetFolder.resolve(relativePath.toString());
 
                     if (isDirectory(path)) {
-                        createDirectory(mojoClass, targetPath);
+                        createDirectory(mojo, targetPath);
                     }
                     else {
-                        createDirectory(mojoClass, targetPath.getParent());
+                        createDirectory(mojo, targetPath.getParent());
                         copy(path, targetPath, REPLACE_EXISTING);
                         log.info("Resource [%s] created".formatted(path));
                     }
                 }
             }
-
         }
         catch (final Exception e) {
             log.error("Error processing source file: [%s] / target [%s]".formatted(sourceFolderInJar, targetFolder), e);

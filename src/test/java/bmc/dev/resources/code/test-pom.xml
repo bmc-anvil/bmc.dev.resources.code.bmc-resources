@@ -1,0 +1,32 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.test</groupId>
+    <artifactId>test-project</artifactId>
+    <version>bmc_local</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>bmc.dev.resources.code</groupId>
+                <artifactId>bmc-resources</artifactId>
+                <version>bmc_local</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-architecture</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <architecture>
+                        <model>clean_ddd_hexa</model>
+                        <skipReadme>true</skipReadme>
+                    </architecture>
+                    <resources>
+                        <overwriteUserResources>false</overwriteUserResources>
+                    </resources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

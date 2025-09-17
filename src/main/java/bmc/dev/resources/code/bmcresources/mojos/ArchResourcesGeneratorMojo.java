@@ -1,20 +1,20 @@
 package bmc.dev.resources.code.bmcresources.mojos;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
-import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
+import bmc.dev.resources.code.bmcresources.properties.ArchitectureConfig;
+import bmc.dev.resources.code.bmcresources.properties.GeneralConfig;
+import bmc.dev.resources.code.bmcresources.properties.ResourcesConfig;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
-import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignStructureWriter.createArchitectureStructure;
-import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesProcessor.processResources;
-import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileUpdater.updateMavenConfig;
-import static java.lang.Boolean.FALSE;
-import static java.lang.System.getProperty;
-import static java.util.Optional.ofNullable;
+import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchitectureExecution.createArchitecture;
+import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesExecution.createResources;
+import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.hasPluginVersionChanged;
+import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
 
 /**
@@ -29,51 +29,50 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
      * Configuration for architecture-related operations during the plugin execution.
      */
     @Parameter
-    private ArchitectureConfig architecture = new ArchitectureConfig();
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject       mavenProject;
+    private final ArchitectureConfig architecture  = new ArchitectureConfig();
+    /**
+     * General plugin configuration options.
+     */
+    @Parameter
+    private final GeneralConfig      generalConfig = new GeneralConfig();
     /**
      * Configuration for resources-related operations during the plugin execution.
      */
     @Parameter
-    private ResourcesConfig    resources    = new ResourcesConfig();
+    private final ResourcesConfig    resources     = new ResourcesConfig();
+    /**
+     * The Maven project:
+     * <p>
+     * This is automatically bound to the project in which the plugin is executed.
+     * It provides access to various Maven-specific information such as dependencies,
+     * build configurations, and properties associated with the project.
+     */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private       MavenProject       mavenProject;
 
     @Override
     public void execute() {
 
-        getLog().info("%s%sArchitecture Structure and Resources creation started.%s".formatted(COLOR_BOLD, COLOR_YELLOW, COLOR_RESET));
-        getLog().info("");
+        final Log log = getLog();
 
-        executeArchitectureCreation();
-        executeResourcesCreation();
+        if (generalConfig.isSkip()) {
+            log.info("%s%sPlugin execution skip is set to true. Nothing to do.%s".formatted(COLOR_BOLD, COLOR_YELLOW, COLOR_RESET));
+        }
+        else if (hasPluginVersionChanged(this, mavenProject)) {
+            log.info("%s%sNew Project or different plugin version. Generating Architecture and Resources.%s".formatted(COLOR_BOLD, COLOR_YELLOW, COLOR_RESET));
+            log.info("%s%sArchitecture Structure and Resources creation started.%s".formatted(COLOR_BOLD, COLOR_YELLOW, COLOR_RESET));
 
-        getLog().info("%s%sArchitecture Structure and Resources creation completed.%s".formatted(COLOR_BOLD, COLOR_YELLOW, COLOR_RESET));
-        getLog().info("");
-    }
+            createResources(resources, this, mavenProject);
+            createArchitecture(architecture, this, mavenProject);
+            stampCurrentPluginVersion(this, mavenProject);
 
-    private void executeArchitectureCreation() {
-
-        final Boolean archCompleted = ofNullable(getProperty(PROPERTY_COMPLETED_ARCH)).map(Boolean::valueOf).orElse(FALSE);
-
-        if (architecture.isSkip() || archCompleted) {
-            getLog().info("%sSkipping generation of architecture. Skip is [%s], Completed is [%s]%s"
-                                  .formatted(COLOR_GREEN, architecture.isSkip(), archCompleted, COLOR_RESET));
+            log.info("%s%sArchitecture Structure and Resources creation completed.%s".formatted(COLOR_BOLD, COLOR_YELLOW, COLOR_RESET));
         }
         else {
-            createArchitectureStructure(this, mavenProject, architecture);
-            updateMavenConfig(this, PROPERTY_COMPLETED_ARCH);
+            log.info("%s%sNo change in plugin version since last run. Nothing to do.%s".formatted(COLOR_BOLD, COLOR_YELLOW, COLOR_RESET));
         }
-    }
 
-    private void executeResourcesCreation() {
-
-        if (resources.isSkip()) {
-            getLog().info("%sSkipping generation of resources. Skip is [%s]%s".formatted(COLOR_GREEN, resources.isSkip(), COLOR_RESET));
-        }
-        else {
-            processResources(this, mavenProject, resources);
-            updateMavenConfig(this, PROPERTY_COMPLETED_RESOURCE);
-        }
+        log.info("");
     }
 
 }

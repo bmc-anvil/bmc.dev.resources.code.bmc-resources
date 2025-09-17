@@ -1,4 +1,4 @@
-package bmc.dev.resources.code.bmcresources.config;
+package bmc.dev.resources.code.bmcresources.properties;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -20,7 +20,7 @@ public class ResourcesConfig {
     @Parameter
     private boolean overwriteUserResources = false;
     /**
-     * Skip the plugin execution altogether.
+     * Skip the resources' execution.
      */
     @Parameter
     private boolean skip                   = false;

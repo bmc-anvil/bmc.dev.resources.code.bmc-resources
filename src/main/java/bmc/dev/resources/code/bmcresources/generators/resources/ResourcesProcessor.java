@@ -7,7 +7,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
-import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
+import bmc.dev.resources.code.bmcresources.properties.ResourcesConfig;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourcesMap;
@@ -19,36 +19,37 @@ import static java.util.Optional.ofNullable;
 
 public class ResourcesProcessor {
 
-    public static void processResources(final AbstractMojo mojoClass, final MavenProject mavenProject, final ResourcesConfig config) {
+    public static void processResources(final AbstractMojo mojo, final MavenProject mavenProject, final ResourcesConfig config) {
 
-        final Log     log                    = mojoClass.getLog();
-        final Boolean userResourcesCompleted = ofNullable(getProperty(PROPERTY_COMPLETED_RESOURCE)).map(Boolean::valueOf).orElse(FALSE);
+        final Log     log                = mojo.getLog();
+        final Boolean resourcesCompleted = ofNullable(getProperty(PROP_COMPLETED_RESOURCE)).map(Boolean::valueOf).orElse(FALSE);
 
         log.info("%sBMC-Resources Generation started.%s".formatted(COLOR_YELLOW, COLOR_RESET));
+        log.info("%sProcessing upstream Resources.%s".formatted(COLOR_YELLOW, COLOR_RESET));
 
-        if (config.isOverwriteUserResources() || !userResourcesCompleted) {
-            log.info("%sProcessing user Resources.%s".formatted(COLOR_YELLOW, COLOR_RESET));
-            final Entry<Integer, Map<String, String>> userResources = readConfigFile(mojoClass, FILE_RESOURCES_USER).orElseThrow();
-            processResourcesMap(mojoClass, mavenProject, userResources);
-            log.info("");
+        final Entry<Integer, Map<String, String>> upstreamResources = readConfigFile(mojo, FILE_RESOURCES_UPSTREAM).orElseThrow();
+        processResourcesMap(mojo, mavenProject, upstreamResources);
+
+        log.info("");
+
+        if (!config.isOverwriteUserResources() && resourcesCompleted) {
+            log.info("%sSkipping Processing user Resources. Overwrite is [%s], Completed is [%s]%s".formatted(COLOR_GREEN, false, true, COLOR_RESET));
         }
         else {
-            log.info("%sSkipping Processing user Resources. Completed is [%s]%s".formatted(COLOR_GREEN, userResourcesCompleted, COLOR_RESET));
+            log.info("%sProcessing user Resources.%s".formatted(COLOR_YELLOW, COLOR_RESET));
+
+            final Entry<Integer, Map<String, String>> userResources = readConfigFile(mojo, FILE_RESOURCES_USER).orElseThrow();
+            processResourcesMap(mojo, mavenProject, userResources);
+
             log.info("");
         }
 
-        log.info("%sProcessing upstream Resources.%s".formatted(COLOR_YELLOW, COLOR_RESET));
-        final Entry<Integer, Map<String, String>> upstreamResources = readConfigFile(mojoClass, FILE_RESOURCES_UPSTREAM).orElseThrow();
-        processResourcesMap(mojoClass, mavenProject, upstreamResources);
-        log.info("");
-
         log.info("%sProcessing executable files.%s".formatted(COLOR_YELLOW, COLOR_RESET));
-        final Entry<Integer, Map<String, String>> executableResources = readConfigFile(mojoClass, FILE_RESOURCES_EXECUTABLES).orElseThrow();
-        makeFilesExecutable(mojoClass, executableResources);
-        log.info("");
+
+        final Entry<Integer, Map<String, String>> executableResources = readConfigFile(mojo, FILE_RESOURCES_EXECUTABLES).orElseThrow();
+        makeFilesExecutable(mojo, executableResources);
 
         log.info("%s%sBMC-Resources Generation completed.%s".formatted(COLOR_BOLD, COLOR_YELLOW, COLOR_RESET));
-        log.info("");
     }
 
 }

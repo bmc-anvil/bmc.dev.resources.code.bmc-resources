@@ -1,4 +1,4 @@
-package bmc.dev.resources.code.bmcresources.textutils;
+package bmc.dev.resources.code.bmcresources.utils;
 
 public class StringUtils {
 
