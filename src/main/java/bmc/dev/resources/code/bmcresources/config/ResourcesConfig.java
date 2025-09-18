@@ -1,4 +1,4 @@
-package bmc.dev.resources.code.bmcresources.properties;
+package bmc.dev.resources.code.bmcresources.config;
 
 import org.apache.maven.plugins.annotations.Parameter;
 

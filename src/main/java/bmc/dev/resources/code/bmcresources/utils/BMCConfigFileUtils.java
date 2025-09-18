@@ -28,7 +28,7 @@ public class BMCConfigFileUtils {
         return entry(folder, readme);
     };
 
-    public static final Predicate<String> discardEmptyAndComment = input -> !isNullOrBlank(input) && !input.startsWith(COMMENT_PREFIX);
+    public static final Predicate<String> discardEmptyAndComment = input -> !isNullOrBlank.test(input) && !input.startsWith(COMMENT_PREFIX);
 
     public static final Function<Collection<String>, Integer> getMaxStringLengthFromCollection = strings -> strings.stream()
                                                                                                                    .map(String::length)
@@ -44,5 +44,7 @@ public class BMCConfigFileUtils {
                                                                                                              .map(createMapEntry)
                                                                                                              .sorted(comparingByKey(CASE_INSENSITIVE_ORDER))
                                                                                                              .collect(toLinkedHashMap);
+
+    private BMCConfigFileUtils() {}
 
 }

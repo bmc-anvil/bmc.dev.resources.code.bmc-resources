@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.maven.plugin.AbstractMojo;
+import lombok.extern.slf4j.Slf4j;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.*;
@@ -15,36 +15,39 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
+@Slf4j
 public class IOUtilities {
 
-    public static void copySingleResource(final AbstractMojo mojo, final String sourceDir, final Path targetPath, final String resource) {
+    private IOUtilities() {}
+
+    public static void copySingleResource(final String sourceDir, final Path targetPath, final String resource) {
 
         final String fullReadmeResourcePath = sourceDir + resource;
 
-        try (final InputStream readmeFileStream = mojo.getClass().getResourceAsStream(fullReadmeResourcePath)) {
+        try (final InputStream readmeFileStream = IOUtilities.class.getResourceAsStream(fullReadmeResourcePath)) {
             if (readmeFileStream == null) {
-                mojo.getLog().warn("Could not find resource [%s]".formatted(fullReadmeResourcePath));
+                log.warn("Could not find resource [{}]", fullReadmeResourcePath);
             }
             else {
                 copy(readmeFileStream, targetPath.resolve(resource), REPLACE_EXISTING);
             }
         }
         catch (final IOException ioe) {
-            mojo.getLog().error("Error copying architecture readme: [%s]".formatted(resource), ioe);
+            log.error("Error copying architecture readme: [{}]", resource, ioe);
         }
     }
 
-    public static void createDirectory(final AbstractMojo mojo, final Path target) {
+    public static void createDirectory(final Path target) {
 
         try {
             createDirectories(target);
         }
         catch (final IOException ioe) {
-            mojo.getLog().error("could not create directory [%s]".formatted(target), ioe);
+            log.error("could not create directory [{}]", target, ioe);
         }
     }
 
-    public static List<String> readAllLinesFromFile(final AbstractMojo mojo, final Path mavenConfigPath) {
+    public static List<String> readAllLinesFromFile(final Path mavenConfigPath) {
 
         try {
             return exists(mavenConfigPath) ? readAllLines(mavenConfigPath, UTF_8) : new ArrayList<>();
@@ -54,10 +57,10 @@ public class IOUtilities {
         }
     }
 
-    public static void writeAllLinesToFile(final AbstractMojo mojo, final Collection<String> linesToWrite, final Path mavenConfigPath) {
+    public static void writeAllLinesToFile(final Collection<String> linesToWrite, final Path mavenConfigPath) {
 
         try {
-            mojo.getLog().debug("writing all lines [%s]".formatted(linesToWrite));
+            log.debug("writing all lines [{}]", linesToWrite);
             write(mavenConfigPath, linesToWrite, UTF_8, CREATE, TRUNCATE_EXISTING);
         }
         catch (final IOException e) {

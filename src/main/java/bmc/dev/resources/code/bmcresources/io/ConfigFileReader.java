@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.logging.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractConfiguration;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.getMaxStringLengthFromCollection;
@@ -17,19 +16,20 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
+@Slf4j
 public class ConfigFileReader {
 
-    public static Optional<Entry<Integer, Map<String, String>>> readConfigFile(final AbstractMojo mojo, final String configFile) {
+    private ConfigFileReader() {}
 
-        final Log log = mojo.getLog();
+    public static Optional<Entry<Integer, Map<String, String>>> readConfigFile(final String configFile) {
 
         try (final BufferedReader archModelReader = new BufferedReader(
-                new InputStreamReader(requireNonNull(mojo.getClass().getResourceAsStream(configFile)), UTF_8))) {
+                new InputStreamReader(requireNonNull(ConfigFileReader.class.getResourceAsStream(configFile)), UTF_8))) {
 
             final Map<String, String> resourcesConfigMap = extractConfiguration.apply(archModelReader);
             final Integer             maxFolderLength    = getMaxStringLengthFromCollection.apply(resourcesConfigMap.keySet());
 
-            log.info("[%s] resources to process according to [%s]".formatted(resourcesConfigMap.size(), configFile));
+            log.info("[{}] resources to process according to [{}]", resourcesConfigMap.size(), configFile);
 
             if (resourcesConfigMap.isEmpty() || maxFolderLength == 0) {
                 log.error("Reduction computed resourcesConfigMap Map<String,String> size or maxFolderLength to 0");

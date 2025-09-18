@@ -5,11 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-
-import bmc.dev.resources.code.bmcresources.properties.ArchitectureConfig;
+import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
+import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignUtils.*;
@@ -17,29 +14,30 @@ import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.readConfig
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectory;
 import static bmc.dev.resources.code.bmcresources.utils.StringUtils.isNullOrBlank;
 
+@Slf4j
 public class ArchDesignStructureWriter {
 
-    public static void processArchitecture(final AbstractMojo mojo, final MavenProject mavenProject, final ArchitectureConfig config) {
+    private ArchDesignStructureWriter() {}
 
-        final Log log = mojo.getLog();
+    public static void processArchitecture(final ArchitectureConfig config) {
 
-        if (isNullOrBlank(config.getModel())) {
-            log.warn("%sArchitecture Structure is blank, skipping.%s".formatted(COLOR_RED, COLOR_RESET));
+        if (isNullOrBlank.test(config.getModel())) {
+            log.warn("{}Architecture Structure is blank, skipping.{}", COLOR_RED, COLOR_RESET);
         }
         else {
 
-            log.info("%sArchitecture Structure creation started.%s".formatted(COLOR_YELLOW, COLOR_RESET));
-            logConfiguration(mojo, config, mavenProject);
+            log.info("{}Architecture Structure creation started.{}", COLOR_YELLOW, COLOR_RESET);
+            logConfiguration(config);
 
-            final Path                                targetRootDir = buildTargetPathForArch(mavenProject);
-            final Entry<Integer, Map<String, String>> structureMap  = readConfigFile(mojo, getArchStructure.apply(config.getModel())).orElseThrow();
-            final BiConsumer<Path, String>            readmeAction  = resolveReadmeOp(mojo, config);
-            final BiConsumer<String, String>          logAction     = resolveLogOp( mojo, config.isSkipReadme(), structureMap.getKey());
+            final Path                                targetRootDir = buildTargetPathForArch();
+            final Entry<Integer, Map<String, String>> structureMap  = readConfigFile(getArchStructure.apply(config.getModel())).orElseThrow();
+            final BiConsumer<Path, String>            readmeAction  = resolveReadmeOp(config);
+            final BiConsumer<String, String>          logAction     = resolveLogOp(config.isSkipReadme(), structureMap.getKey());
 
             structureMap.getValue().forEach((folder, readme) -> {
                 final Path targetDirectory = targetRootDir.resolve(folder);
 
-                createDirectory(mojo, targetDirectory);
+                createDirectory(targetDirectory);
                 readmeAction.accept(targetDirectory, readme);
                 logAction.accept(folder, readme);
             });
@@ -47,7 +45,7 @@ public class ArchDesignStructureWriter {
             readmeAction.accept(targetRootDir, getMainReadme.apply(config.getMainReadme(), config.getModel()));
         }
 
-        log.info("%sArchitecture Structure creation completed.%s".formatted(COLOR_YELLOW, COLOR_RESET));
+        log.info("{}Architecture Structure creation completed.{}", COLOR_YELLOW, COLOR_RESET);
     }
 
 }

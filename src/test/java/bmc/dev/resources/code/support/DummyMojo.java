@@ -10,6 +10,7 @@ public class DummyMojo extends AbstractMojo {
 
     @Override
     public void execute() {
+
     }
 
     @Override

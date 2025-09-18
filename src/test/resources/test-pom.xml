@@ -18,11 +18,17 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <general>
+                        <skip>false</skip>
+                    </general>
                     <architecture>
+                        <mainReadme/>
                         <model>clean_ddd_hexa</model>
-                        <skipReadme>true</skipReadme>
+                        <skip>false</skip>
+                        <skipReadme>false</skipReadme>
                     </architecture>
                     <resources>
+                        <skip>false</skip>
                         <overwriteUserResources>false</overwriteUserResources>
                     </resources>
                 </configuration>

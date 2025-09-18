@@ -1,28 +1,53 @@
 package bmc.dev.resources.code.bmcresources.utils;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import bmc.dev.resources.code.support.DummyMojo;
+import bmc.dev.resources.code.bmcresources.Constants;
+import bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector;
 import bmc.dev.resources.code.support.DummyProject;
 
+import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
+import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.hasPluginVersionChanged;
+import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VersioningUtilsTest {
 
-    @Test
-    public void testHasPluginVersion_whenNoRecordedVersion_Changed_returnsTrue() {
-        // Arrange
-        final AbstractMojo mojo    = new DummyMojo();
+    @BeforeAll
+    public static void setup() {
+
         final MavenProject project = DummyProject.createWithTestBaseDir();
+        MavenProjectInjector.setMavenProject(project);
+    }
 
-        // Act
-        final Boolean result = VersioningUtils.hasPluginVersionChanged(mojo, project);
+    @Test
+    public void testCurrentVersionExists_returnsFalse() {
 
-        // Assert
-        // When no recorded version exists (readProperty returns empty),
-        // the method should report "different version" as true.
+        stampCurrentPluginVersion();
+
+        final Boolean result = hasPluginVersionChanged();
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testDifferentVersionExists_returnsTrue() {
+
+        writeMavenProperty(Constants.PROP_CREATED_WITH_VERSION, "=poteyto-potAHto");
+
+        final Boolean result = hasPluginVersionChanged();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testNoVersionExists_returnsTrue() {
+
+        final Boolean result = hasPluginVersionChanged();
+
         assertTrue(result);
     }
 

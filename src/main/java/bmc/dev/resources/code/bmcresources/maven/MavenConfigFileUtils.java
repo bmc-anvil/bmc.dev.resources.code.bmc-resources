@@ -12,4 +12,6 @@ public class MavenConfigFileUtils {
             .filter(i -> list.get(i).contains(property))
             .findFirst();
 
+    private MavenConfigFileUtils() {}
+
 }
