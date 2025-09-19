@@ -1,7 +1,5 @@
 package bmc.dev.resources.code.bmcresources.utils;
 
-import java.util.Optional;
-
 import org.apache.maven.model.Plugin;
 
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +8,8 @@ import static bmc.dev.resources.code.bmcresources.Constants.PLUGIN_KEY;
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_CREATED_WITH_VERSION;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileReader.readMavenProperty;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.GetMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatCyan;
 
 @Slf4j
 public class VersioningUtils {
@@ -27,22 +26,22 @@ public class VersioningUtils {
      */
     public static Boolean hasPluginVersionChanged() {
 
-        log.debug("BMC resources plugin key: {}", PLUGIN_KEY);
+        log.debug(formatCyan("BMC resources plugin key: [{}]"), PLUGIN_KEY);
 
-        final Plugin           plugin                   = GetMavenProject().getPlugin(PLUGIN_KEY);
-        final String           currentPluginVersion     = plugin.getVersion().trim();
-        final Optional<String> createdWithPluginVersion = readMavenProperty(PROP_CREATED_WITH_VERSION);
+        final Plugin plugin                   = getMavenProject().getPlugin(PLUGIN_KEY);
+        final String currentPluginVersion     = plugin.getVersion().trim();
+        final String createdWithPluginVersion = readMavenProperty(PROP_CREATED_WITH_VERSION).orElse("");
 
-        log.debug("Plugin check: executed with v.[{}] / created with v.[{}]", currentPluginVersion, createdWithPluginVersion.orElse(""));
+        log.debug(formatCyan("Plugin check: executed with v.[{}] / created with v.[{}]"), currentPluginVersion, createdWithPluginVersion);
 
-        return !currentPluginVersion.equals(createdWithPluginVersion.orElse(""));
+        return !currentPluginVersion.equals(createdWithPluginVersion);
     }
 
     public static void stampCurrentPluginVersion() {
 
-        log.debug("BMC resources plugin key: " + PLUGIN_KEY);
+        log.debug(formatCyan("BMC resources plugin key: [{}]"), PLUGIN_KEY);
 
-        final Plugin plugin               = GetMavenProject().getPlugin(PLUGIN_KEY);
+        final Plugin plugin               = getMavenProject().getPlugin(PLUGIN_KEY);
         final String currentPluginVersion = plugin.getVersion().trim();
 
         writeMavenProperty(PROP_CREATED_WITH_VERSION, currentPluginVersion);

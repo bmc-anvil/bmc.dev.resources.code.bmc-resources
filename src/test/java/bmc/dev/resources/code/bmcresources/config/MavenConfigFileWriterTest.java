@@ -6,7 +6,8 @@ import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 
 import bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector;
-import bmc.dev.resources.code.support.DummyProject;
+import bmc.dev.resources.code.support.DummyProjectForTest;
+import bmc.dev.resources.code.support.InjectorResetForTest;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.readAllLinesFromFile;
@@ -14,12 +15,12 @@ import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.wr
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MavenConfigFileWriterTest {
+class MavenConfigFileWriterTest extends InjectorResetForTest {
 
     @Test
     void writeMavenPropertyTest() {
 
-        final MavenProject project               = DummyProject.createWithTestBaseDir();
+        final MavenProject project               = DummyProjectForTest.createWithTestBaseDir();
         final String       resourcesCompleted    = MVN_PREFIX + PROP_COMPLETED_RESOURCE + "=true";
         final String       architectureCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=true";
         final String       versionStamp          = MVN_PREFIX + PROP_CREATED_WITH_VERSION + "=" + project.getPlugin(PLUGIN_KEY).getVersion();

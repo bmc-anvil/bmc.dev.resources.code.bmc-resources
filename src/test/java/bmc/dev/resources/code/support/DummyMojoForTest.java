@@ -4,7 +4,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
-public class DummyMojo extends AbstractMojo {
+public class DummyMojoForTest extends AbstractMojo {
 
     private final Log log = new SystemStreamLog();
 

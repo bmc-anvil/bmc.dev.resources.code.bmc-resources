@@ -8,7 +8,8 @@ import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.GetMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatCyan;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readAllLines;
@@ -20,11 +21,11 @@ public class MavenConfigFileReader {
 
     public static Optional<String> readMavenProperty(final String propertyToRead) {
 
-        final Path mavenConfigPath = GetMavenProject().getBasedir().toPath().resolve(".mvn", "maven.config");
+        final Path mavenConfigPath = getMavenProject().getBasedir().toPath().resolve(".mvn", "maven.config");
 
         try {
             final List<String> lines = exists(mavenConfigPath) ? readAllLines(mavenConfigPath, UTF_8) : new ArrayList<>();
-            log.debug("Reading config file: {} ", lines);
+            log.debug(formatCyan("Reading config file: [{}]"), lines);
 
             return lines.stream()
                         .filter(line -> line.contains(propertyToRead))

@@ -10,6 +10,7 @@ import bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectory;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatYellowBold;
 import static java.nio.file.FileSystems.newFileSystem;
 import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -25,7 +26,7 @@ public class ResourcesWriter {
             final String sourcePadded = padding.formatted(source);
 
             if (sourceStream == null) {
-                log.warn("Could not find [{}]", sourcePadded);
+                log.warn(formatYellowBold("Could not find [{}]"), sourcePadded);
             }
             else {
                 copy(sourceStream, projectBasePath.resolve(target), REPLACE_EXISTING);

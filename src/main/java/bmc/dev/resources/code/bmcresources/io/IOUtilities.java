@@ -9,6 +9,8 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatCyan;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatYellowBold;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -26,7 +28,7 @@ public class IOUtilities {
 
         try (final InputStream readmeFileStream = IOUtilities.class.getResourceAsStream(fullReadmeResourcePath)) {
             if (readmeFileStream == null) {
-                log.warn("Could not find resource [{}]", fullReadmeResourcePath);
+                log.warn(formatYellowBold("Could not find resource [{}]"), fullReadmeResourcePath);
             }
             else {
                 copy(readmeFileStream, targetPath.resolve(resource), REPLACE_EXISTING);
@@ -60,7 +62,7 @@ public class IOUtilities {
     public static void writeAllLinesToFile(final Collection<String> linesToWrite, final Path mavenConfigPath) {
 
         try {
-            log.debug("writing all lines [{}]", linesToWrite);
+            log.debug(formatCyan("writing all lines [{}]"), linesToWrite);
             write(mavenConfigPath, linesToWrite, UTF_8, CREATE, TRUNCATE_EXISTING);
         }
         catch (final IOException e) {

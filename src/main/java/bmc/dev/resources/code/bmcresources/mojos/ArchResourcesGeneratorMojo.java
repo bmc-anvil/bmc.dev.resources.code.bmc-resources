@@ -11,10 +11,10 @@ import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
 import bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector;
 import lombok.extern.slf4j.Slf4j;
 
-import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchitectureExecution.createArchitecture;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesExecution.createResources;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatYellowBold;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.hasPluginVersionChanged;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
@@ -22,7 +22,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURC
 /**
  * Generator of the initial architecture folder structure for a project.
  * <p>
- * Architecture design files are packaged in the plugin itself, so no connectivity is required after the initial download.
+ * Architecture design and resources files are packaged in the plugin itself, so no connectivity is required after the initial download.
  */
 @Slf4j
 @Mojo(name = "generate-architecture", defaultPhase = GENERATE_SOURCES, threadSafe = true)
@@ -64,6 +64,7 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
      * It is paramount that setting the maven project is the first thing that happens. Check {@link MavenProjectInjector} for details.
      * <br> Because this is an intermediate project between maven 3.9.x and 4.x.x, the current Maven "DI" is not used, so the injector above works as
      * some innocent man's DI.
+     * <br> It is not DI, it is a locator antipattern that should be banned in larger projects and will be gone in maven 4.x.x port.
      * <p>
      * The project is made so a Gradle savvy person can make it into a Gradle plugin with more ease than if I've plugged mavenProject and MOJO all over.
      * <br> The same will go for myself when porting this to Maven 4.
@@ -74,20 +75,20 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
         setMavenProject(mavenProject);
 
         if (generalConfig.isSkip()) {
-            log.info("{}{}Plugin execution skip is set to true. Nothing to do.{}", COLOR_BOLD, COLOR_YELLOW, COLOR_RESET);
+            log.info(formatYellowBold("Plugin execution skip is set to true. Nothing to do."));
         }
         else if (hasPluginVersionChanged()) {
-            log.info("{}{}New Project or different plugin version. Generating Architecture and Resources.{}", COLOR_BOLD, COLOR_YELLOW, COLOR_RESET);
-            log.info("{}{}Architecture Structure and Resources creation started.{}", COLOR_BOLD, COLOR_YELLOW, COLOR_RESET);
+            log.info(formatYellowBold("New Project or different plugin version. Generating Architecture and Resources."));
+            log.info(formatYellowBold("Architecture Structure and Resources creation started."));
 
             createResources(resources);
             createArchitecture(architecture);
             stampCurrentPluginVersion();
 
-            log.info("{}{}Architecture Structure and Resources creation completed.{}", COLOR_BOLD, COLOR_YELLOW, COLOR_RESET);
+            log.info(formatYellowBold("Architecture Structure and Resources creation completed."));
         }
         else {
-            log.info("{}{}No change in plugin version since last run. Nothing to do.{}", COLOR_BOLD, COLOR_YELLOW, COLOR_RESET);
+            log.info(formatYellowBold("No change in plugin version since last run. Nothing to do."));
         }
 
         log.info("");

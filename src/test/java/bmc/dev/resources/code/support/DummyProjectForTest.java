@@ -14,7 +14,7 @@ import lombok.SneakyThrows;
 
 import static java.nio.file.Files.createDirectories;
 
-public class DummyProject {
+public class DummyProjectForTest {
 
     @SneakyThrows
     public static MavenProject createWithTestBaseDir() {
@@ -31,7 +31,7 @@ public class DummyProject {
         project.setBuild(build);
 
         final String testPomFile = "test-pom.xml";
-        final Path   source      = Path.of(DummyProject.class.getResource("/" + testPomFile).getPath()).getParent();
+        final Path   source      = Path.of(DummyProjectForTest.class.getResource("/" + testPomFile).getPath()).getParent();
         final Path   tmpDir      = Files.createDirectory(source.resolve("tmp-" + UUID.randomUUID()));
         final Path   target      = tmpDir.resolve(testPomFile);
 

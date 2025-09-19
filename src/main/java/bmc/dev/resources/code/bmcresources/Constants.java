@@ -2,13 +2,6 @@ package bmc.dev.resources.code.bmcresources;
 
 public class Constants {
 
-    public static final String COLOR_BLUE                 = "\u001B[34m";
-    public static final String COLOR_BOLD                 = "\u001B[1m";
-    public static final String COLOR_CYAN                 = "\u001B[36m";
-    public static final String COLOR_GREEN                = "\u001B[32m";
-    public static final String COLOR_RED                  = "\u001B[31m";
-    public static final String COLOR_RESET                = "\u001B[0m";
-    public static final String COLOR_YELLOW               = "\u001B[33m";
     public static final String COMMENT_PREFIX             = "#";
     public static final String CONFIG_EXT                 = ".config";
     public static final String FOLDER_ARCH_MODELS         = "/architecture_models";

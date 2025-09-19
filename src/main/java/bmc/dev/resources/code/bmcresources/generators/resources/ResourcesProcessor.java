@@ -10,6 +10,7 @@ import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourcesMap;
 import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.readConfigFile;
 import static bmc.dev.resources.code.bmcresources.io.OSUtilities.makeFilesExecutable;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.*;
 import static java.lang.Boolean.FALSE;
 import static java.lang.System.getProperty;
 import static java.util.Optional.ofNullable;
@@ -21,8 +22,8 @@ public class ResourcesProcessor {
 
         final Boolean resourcesCompleted = ofNullable(getProperty(PROP_COMPLETED_RESOURCE)).map(Boolean::valueOf).orElse(FALSE);
 
-        log.info("{}BMC-Resources Generation started.{}", COLOR_YELLOW, COLOR_RESET);
-        log.info("{}Processing upstream Resources.{}", COLOR_YELLOW, COLOR_RESET);
+        log.info(formatYellow("BMC-Resources Generation started."));
+        log.info(formatYellow("Processing upstream Resources."));
 
         final Entry<Integer, Map<String, String>> upstreamResources = readConfigFile(FILE_RESOURCES_UPSTREAM).orElseThrow();
         processResourcesMap(upstreamResources);
@@ -30,10 +31,10 @@ public class ResourcesProcessor {
         log.info("");
 
         if (!config.isOverwriteUserResources() && resourcesCompleted) {
-            log.info("{}Skipping Processing user Resources. Overwrite is [{}], Completed is [{}]{}", COLOR_GREEN, false, true, COLOR_RESET);
+            log.info(formatGreen("Skipping Processing user Resources. Overwrite is [{}], Completed is [{}]"), false, true);
         }
         else {
-            log.info("{}Processing user Resources.{}", COLOR_YELLOW, COLOR_RESET);
+            log.info(formatYellow("Processing user Resources."));
 
             final Entry<Integer, Map<String, String>> userResources = readConfigFile(FILE_RESOURCES_USER).orElseThrow();
             processResourcesMap(userResources);
@@ -41,12 +42,12 @@ public class ResourcesProcessor {
             log.info("");
         }
 
-        log.info("{}Processing executable files.{}", COLOR_YELLOW, COLOR_RESET);
+        log.info(formatYellow("Processing executable files."));
 
         final Entry<Integer, Map<String, String>> executableResources = readConfigFile(FILE_RESOURCES_EXECUTABLES).orElseThrow();
         makeFilesExecutable(executableResources);
 
-        log.info("{}{}BMC-Resources Generation completed.{}", COLOR_BOLD, COLOR_YELLOW, COLOR_RESET);
+        log.info(formatYellowBold("BMC-Resources Generation completed."));
     }
 
 }

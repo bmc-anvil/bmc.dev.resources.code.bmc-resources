@@ -12,8 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignReadmeWriter.copyReadme;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.GetMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.calculatePadding;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatBlue;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatBlueBold;
 import static java.util.Optional.ofNullable;
 
 @Slf4j
@@ -27,7 +29,7 @@ public class ArchDesignUtils {
 
     public static Path buildTargetPathForArch() {
 
-        final MavenProject mavenProject = GetMavenProject();
+        final MavenProject mavenProject = getMavenProject();
 
         final String artifactId      = mavenProject.getArtifactId().replace("-", "");
         final String groupId         = mavenProject.getGroupId().replace(".", "/");
@@ -38,17 +40,17 @@ public class ArchDesignUtils {
 
     public static void logConfiguration(final ArchitectureConfig config) {
 
-        final MavenProject mavenProject = GetMavenProject();
+        final MavenProject mavenProject = getMavenProject();
 
-        log.info("{}{}Architecture Structure configuration:{}", COLOR_BLUE, COLOR_BOLD, COLOR_RESET);
-        log.info("{} --- skip: {}{}", COLOR_BLUE, config.isSkip(), COLOR_RESET);
-        log.info("{} --- skipReadmes: {}{}", COLOR_BLUE, config.isSkipReadme(), COLOR_RESET);
-        log.info("{} --- model: {}{}", COLOR_BLUE, config.getModel(), COLOR_RESET);
-        log.info("{} --- mainReadme: {}{}", COLOR_BLUE, config.getMainReadme(), COLOR_RESET);
-        log.info("{} --- artifactId: {}{}", COLOR_BLUE, mavenProject.getArtifactId(), COLOR_RESET);
-        log.info("{} --- groupId: {}{}", COLOR_BLUE, mavenProject.getGroupId(), COLOR_RESET);
-        log.info("{} --- mavenSourceDirectory: {}{}", COLOR_BLUE, mavenProject.getBuild().getSourceDirectory(), COLOR_RESET);
-        log.info("{} --- archTargetDirectory: {}{}", COLOR_BLUE, buildTargetPathForArch(), COLOR_RESET);
+        log.info(formatBlueBold("Architecture Structure configuration:"));
+        log.info(formatBlue(" --- skip: [{}]"), config.isSkip());
+        log.info(formatBlue(" --- skipReadmes: [{}]"), config.isSkipReadme());
+        log.info(formatBlue(" --- model: [{}]"), config.getModel());
+        log.info(formatBlue(" --- mainReadme: [{}]"), config.getMainReadme());
+        log.info(formatBlue(" --- artifactId: [{}]"), mavenProject.getArtifactId());
+        log.info(formatBlue(" --- groupId: [{}]"), mavenProject.getGroupId());
+        log.info(formatBlue(" --- mavenSourceDirectory: [{}]"), mavenProject.getBuild().getSourceDirectory());
+        log.info(formatBlue(" --- archTargetDirectory: [{}]"), buildTargetPathForArch());
         log.info("");
     }
 

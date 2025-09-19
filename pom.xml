@@ -16,6 +16,9 @@
     <name>BMC - BMC Resources</name>
     <description>BMC Resources comprising code style, checkstyle, ignore files, architectural design models et als, common for all projects.</description>
 
+    <properties>
+        <slf4j.simple.version>1.7.36</slf4j.simple.version>
+    </properties>
     <!--
         Note:
         There are mostly no dependencies but the required maven ones, and it is on purpose.
@@ -36,9 +39,23 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--
+             We only need this for test as maven-core et als bring it to production code.
+             For this to correctly bind to SLF4J, it has to match the same version of any other implementation already present,
+             and maven brings the one below.
+             Update the version if maven updates its version
+             Simple outputs to system.err, so all logs will be red.
+             -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.simple.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
