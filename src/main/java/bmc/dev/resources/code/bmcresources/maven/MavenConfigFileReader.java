@@ -1,6 +1,5 @@
 package bmc.dev.resources.code.bmcresources.maven;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class MavenConfigFileReader {
 
     private MavenConfigFileReader() {}
 
-    public static Optional<String> readMavenProperty(final String propertyToRead) {
+    public static Optional<String> getMavenPropertyValue(final String propertyToRead) {
 
         final Path mavenConfigPath = getMavenProject().getBasedir().toPath().resolve(".mvn", "maven.config");
 
@@ -28,11 +27,12 @@ public class MavenConfigFileReader {
             log.debug(formatCyan("Reading config file: [{}]"), lines);
 
             return lines.stream()
+                        .filter(line -> line.contains("="))
                         .filter(line -> line.contains(propertyToRead))
                         .map(line -> line.split("=", 2)[1])
                         .findFirst();
         }
-        catch (final IOException e) {
+        catch (final Exception e) {
             log.error("Error reading property [{}] from maven.config", propertyToRead, e);
             throw new RuntimeException(e);
         }

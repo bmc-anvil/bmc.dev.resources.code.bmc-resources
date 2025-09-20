@@ -2,14 +2,14 @@ package bmc.dev.resources.code.support;
 
 import org.junit.jupiter.api.AfterEach;
 
-import bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.reset;
 
 public class InjectorResetForTest {
 
     @AfterEach
-    void reset() {
+    void resetInjection() {
 
-        MavenProjectInjector.reset();
+        reset();
     }
 
 }

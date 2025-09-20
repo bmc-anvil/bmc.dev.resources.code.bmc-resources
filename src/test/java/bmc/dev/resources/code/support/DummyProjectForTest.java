@@ -9,10 +9,9 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 
-import bmc.dev.resources.code.bmcresources.io.IOUtilities;
 import lombok.SneakyThrows;
 
-import static java.nio.file.Files.createDirectories;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copySingleResource;
 
 public class DummyProjectForTest {
 
@@ -33,13 +32,10 @@ public class DummyProjectForTest {
         final String testPomFile = "test-pom.xml";
         final Path   source      = Path.of(DummyProjectForTest.class.getResource("/" + testPomFile).getPath()).getParent();
         final Path   tmpDir      = Files.createDirectory(source.resolve("tmp-" + UUID.randomUUID()));
-        final Path   target      = tmpDir.resolve(testPomFile);
 
-        createDirectories(target.getParent());
+        copySingleResource("/", tmpDir, testPomFile);
 
-        IOUtilities.copySingleResource(source.toString(), target, testPomFile);
-
-        final File temp = target.toFile();
+        final File temp = tmpDir.resolve(testPomFile).toFile();
         project.setFile(temp);
 
         return project;

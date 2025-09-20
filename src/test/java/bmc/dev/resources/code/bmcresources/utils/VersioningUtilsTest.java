@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class VersioningUtilsTest extends InjectorResetForTest {
 
     @Test
-    public void testCurrentVersionExists_returnsFalse() {
+    public void currentVersionExists_returnsFalse() {
 
         final MavenProject project = DummyProjectForTest.createWithTestBaseDir();
         MavenProjectInjector.setMavenProject(project);
@@ -30,7 +30,7 @@ public class VersioningUtilsTest extends InjectorResetForTest {
     }
 
     @Test
-    public void testDifferentVersionExists_returnsTrue() {
+    public void differentVersionExists_returnsTrue() {
 
         final MavenProject project = DummyProjectForTest.createWithTestBaseDir();
         MavenProjectInjector.setMavenProject(project);
@@ -43,7 +43,7 @@ public class VersioningUtilsTest extends InjectorResetForTest {
     }
 
     @Test
-    public void testNoVersionExists_returnsTrue() {
+    public void noVersionExists_returnsTrue() {
 
         final MavenProject project = DummyProjectForTest.createWithTestBaseDir();
         MavenProjectInjector.setMavenProject(project);

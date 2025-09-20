@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.PLUGIN_KEY;
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_CREATED_WITH_VERSION;
-import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileReader.readMavenProperty;
+import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileReader.getMavenPropertyValue;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatCyan;
@@ -30,7 +30,7 @@ public class VersioningUtils {
 
         final Plugin plugin                   = getMavenProject().getPlugin(PLUGIN_KEY);
         final String currentPluginVersion     = plugin.getVersion().trim();
-        final String createdWithPluginVersion = readMavenProperty(PROP_CREATED_WITH_VERSION).orElse("");
+        final String createdWithPluginVersion = getMavenPropertyValue(PROP_CREATED_WITH_VERSION).orElse("");
 
         log.debug(formatCyan("Plugin check: executed with v.[{}] / created with v.[{}]"), currentPluginVersion, createdWithPluginVersion);
 
