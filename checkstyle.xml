@@ -330,7 +330,7 @@
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
         </module>
         <module name="SuppressionXpathSingleFilter">
-            <property name="checks" value="MissingJavadocMethod"/>
+            <property name="checks" value="MissingJavadocMethod|MissingJavadocType"/>
             <property name="files" value=".*Test\..*"/>
         </module>
         <module name="SuppressionXpathSingleFilter">

@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>bmc.dev.resources.code</groupId>
+        <groupId>bmc.dev.templates.maven</groupId>
         <artifactId>bmc-resources-parent</artifactId>
-        <version>40b4e2b</version>
+        <version>333b474</version>
     </parent>
 
     <artifactId>bmc-resources</artifactId>
@@ -16,9 +16,6 @@
     <name>BMC - BMC Resources</name>
     <description>BMC Resources comprising code style, checkstyle, ignore files, architectural design models et als, common for all projects.</description>
 
-    <properties>
-        <slf4j.simple.version>1.7.36</slf4j.simple.version>
-    </properties>
     <!--
         Note:
         There are mostly no dependencies but the required maven ones, and it is on purpose.
@@ -64,10 +61,9 @@
 
         <!--
              We only need this for test as maven-core et als bring it to production code.
-             For this to correctly bind to SLF4J, it has to match the same version of any other implementation already present,
+             For this to correctly bind to SLF4J, it has to match the same version of any other implementation already present;
              and maven brings the one below.
-             Update the version if maven updates its version
-             Simple outputs to system.err, so all logs will be red.
+             Update the version if maven updates its version.
         -->
         <dependency>
             <groupId>org.slf4j</groupId>
