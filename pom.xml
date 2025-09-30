@@ -9,7 +9,7 @@
         <version>333b474</version>
     </parent>
 
-    <groupId>bmc.dev.resources.maven</groupId>
+    <groupId>bmc.dev.resources.code</groupId>
     <artifactId>bmc-resources</artifactId>
     <version>bmc-local</version>
     <packaging>maven-plugin</packaging>
