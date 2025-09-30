@@ -14,10 +14,10 @@ Guidance:
 - Do:
     - Keep handlers focused and cohesive.
     - One (1) file per use case. Example:
-      - AddUserUseCase -> `execute(final UserCommand userCommand)`
-      - UpdateUserUseCase -> `execute(final UserCommand userCommand)`
-      - GetUserByIdUseCase -> `execute(final Id id)`
-      - GetUserBySomeCriteriaUseCase -> `execute(final UserQuery userQuery)`
+        - AddUserUseCase -> `execute(final UserCommand userCommand)`
+        - UpdateUserUseCase -> `execute(final UserCommand userCommand)`
+        - GetUserByIdUseCase -> `execute(final Id id)`
+        - GetUserBySomeCriteriaUseCase -> `execute(final UserQuery userQuery)`
     - Validate application-level constraints and orchestrate domain calls.
 - Don’t:
     - Implement persistence logic here.
