@@ -385,11 +385,10 @@
             <property name="influenceFormat" value="1"/>
         </module>
 
-        <module name="VariableDeclarationUsage">
-            <property name="tokens" value="VARIABLE_DEF"/>
-            <property name="xpathQuery" value="//VARIABLE_DEF/LITERAL_VAR"/>
-            <property name="message" value="Avoid 'var'; use explicit types."/>
-            <property name="severity" value="error"/>
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="^\s*var\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*="/>
+            <property name="message" value="Usage of 'var' keyword is not allowed. Use explicit type declarations."/>
+            <property name="ignoreComments" value="true"/>
         </module>
 
         <module name="FinalLocalVariable">
