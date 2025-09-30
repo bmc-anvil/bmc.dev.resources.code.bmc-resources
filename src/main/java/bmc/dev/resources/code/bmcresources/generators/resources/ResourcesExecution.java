@@ -6,7 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_COMPLETED_RESOURCE;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesProcessor.processResources;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatGreen;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.GREEN;
 
 @Slf4j
 public class ResourcesExecution {
@@ -14,7 +15,7 @@ public class ResourcesExecution {
     public static void createResources(final ResourcesConfig resources) {
 
         if (resources.isSkip()) {
-            log.info(formatGreen("{}Skipping generation of resources. Skip is [{}]{}"), true);
+            log.info(formatColor.apply(GREEN, "{}Skipping generation of resources. Skip is [{}]{}"), true);
         }
         else {
             processResources(resources);

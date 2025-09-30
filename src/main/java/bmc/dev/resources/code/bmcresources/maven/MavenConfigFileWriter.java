@@ -3,19 +3,21 @@ package bmc.dev.resources.code.bmcresources.maven;
 import java.nio.file.Path;
 import java.util.List;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.MVN_PREFIX;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.*;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileUtils.findPropertyIndex;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatCyan;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatRedBold;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.CYAN;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.RED;
 
 @Slf4j
+@UtilityClass
 public class MavenConfigFileWriter {
-
-    private MavenConfigFileWriter() {}
 
     public static void writeMavenProperty(final String propertyKey, final String propertyValue) {
 
@@ -27,7 +29,7 @@ public class MavenConfigFileWriter {
 
         final List<String> lines = readAllLinesFromFile(mavenConfigPath);
 
-        log.debug(formatCyan("lines before filtering: [{}]"), lines);
+        log.debug(formatColor.apply(CYAN, "lines before filtering: [{}]"), lines);
 
         if (lines.isEmpty()) {
             lines.add(updatedPropertyWithPrefix);
@@ -37,11 +39,11 @@ public class MavenConfigFileWriter {
                              .ifPresentOrElse(index -> lines.set(index, updatedPropertyWithPrefix), () -> lines.add(updatedPropertyWithPrefix));
         }
 
-        log.debug(formatCyan("lines after filtering: [{}]"), lines);
+        log.debug(formatColor.apply(CYAN, "lines after filtering: [{}]"), lines);
 
         writeAllLinesToFile(lines, mavenConfigPath);
 
-        log.info(formatRedBold("Updated [{}] with [{}=true]"), mavenConfigPath, MVN_PREFIX + propertyKey);
+        log.info(formatBoldColor.apply(RED, "Updated [{}] with [{}=true]"), mavenConfigPath, MVN_PREFIX + propertyKey);
     }
 
 }

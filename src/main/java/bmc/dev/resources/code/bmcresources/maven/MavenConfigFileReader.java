@@ -5,18 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatCyan;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.CYAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readAllLines;
 
 @Slf4j
+@UtilityClass
 public class MavenConfigFileReader {
-
-    private MavenConfigFileReader() {}
 
     public static Optional<String> getMavenPropertyValue(final String propertyToRead) {
 
@@ -24,7 +25,7 @@ public class MavenConfigFileReader {
 
         try {
             final List<String> lines = exists(mavenConfigPath) ? readAllLines(mavenConfigPath, UTF_8) : new ArrayList<>();
-            log.debug(formatCyan("Reading config file: [{}]"), lines);
+            log.debug(formatColor.apply(CYAN, "Reading config file: [{}]"), lines);
 
             return lines.stream()
                         .filter(line -> line.contains("="))

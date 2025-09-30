@@ -8,24 +8,25 @@ import java.util.function.Function;
 import org.apache.maven.project.MavenProject;
 
 import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignReadmeWriter.copyReadme;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
-import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.calculatePadding;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatBlue;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatBlueBold;
+import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.calculateLeftAlignedPadding;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.BLUE;
 import static java.util.Optional.ofNullable;
 
 @Slf4j
+@UtilityClass
 public class ArchDesignUtils {
 
     public static Function<String, String>           getArchStructure          = model -> FOLDER_ARCH_MODELS + "/" + model + "/" + model + CONFIG_EXT;
     public static BiFunction<String, String, String> getMainReadme             = (readme, model) -> ofNullable(readme).orElse(model + ".md");
     public static Function<String, String>           getReadmesSourceDirectory = model -> FOLDER_ARCH_MODELS + "/" + model + FOLDER_TEMPLATES + "/";
-
-    private ArchDesignUtils() {}
 
     public static Path buildTargetPathForArch() {
 
@@ -42,21 +43,21 @@ public class ArchDesignUtils {
 
         final MavenProject mavenProject = getMavenProject();
 
-        log.info(formatBlueBold("Architecture Structure configuration:"));
-        log.info(formatBlue(" --- skip: [{}]"), config.isSkip());
-        log.info(formatBlue(" --- skipReadmes: [{}]"), config.isSkipReadme());
-        log.info(formatBlue(" --- model: [{}]"), config.getModel());
-        log.info(formatBlue(" --- mainReadme: [{}]"), config.getMainReadme());
-        log.info(formatBlue(" --- artifactId: [{}]"), mavenProject.getArtifactId());
-        log.info(formatBlue(" --- groupId: [{}]"), mavenProject.getGroupId());
-        log.info(formatBlue(" --- mavenSourceDirectory: [{}]"), mavenProject.getBuild().getSourceDirectory());
-        log.info(formatBlue(" --- archTargetDirectory: [{}]"), buildTargetPathForArch());
+        log.info(formatBoldColor.apply(BLUE, "Architecture Structure configuration:"));
+        log.info(formatColor.apply(BLUE, " --- skip: [{}]"), config.isSkip());
+        log.info(formatColor.apply(BLUE, " --- skipReadmes: [{}]"), config.isSkipReadme());
+        log.info(formatColor.apply(BLUE, " --- model: [{}]"), config.getModel());
+        log.info(formatColor.apply(BLUE, " --- mainReadme: [{}]"), config.getMainReadme());
+        log.info(formatColor.apply(BLUE, " --- artifactId: [{}]"), mavenProject.getArtifactId());
+        log.info(formatColor.apply(BLUE, " --- groupId: [{}]"), mavenProject.getGroupId());
+        log.info(formatColor.apply(BLUE, " --- mavenSourceDirectory: [{}]"), mavenProject.getBuild().getSourceDirectory());
+        log.info(formatColor.apply(BLUE, " --- archTargetDirectory: [{}]"), buildTargetPathForArch());
         log.info("");
     }
 
     public static BiConsumer<String, String> resolveLogOp(final boolean skip, final Integer maxFolderNameLength) {
 
-        final String padding = calculatePadding.apply(maxFolderNameLength);
+        final String padding = calculateLeftAlignedPadding.apply(maxFolderNameLength);
 
         return skip ? (folder, _) -> log.info("Created folder [{}]", padding.formatted(folder))
                     : (folder, readme) -> log.info("Created folder [{}] with readme [{}]", padding.formatted(folder), readme);

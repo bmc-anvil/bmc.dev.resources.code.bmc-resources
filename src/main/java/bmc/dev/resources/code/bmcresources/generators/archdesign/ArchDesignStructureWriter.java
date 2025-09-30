@@ -11,9 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignUtils.*;
 import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.readConfigFile;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectory;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatYellow;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatYellowBold;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
 import static bmc.dev.resources.code.bmcresources.utils.StringUtils.isNullOrBlank;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
 
 @Slf4j
 public class ArchDesignStructureWriter {
@@ -23,11 +24,11 @@ public class ArchDesignStructureWriter {
     public static void processArchitecture(final ArchitectureConfig config) {
 
         if (isNullOrBlank.test(config.getModel())) {
-            log.warn(formatYellowBold("Architecture Structure is blank, skipping."));
+            log.warn(formatBoldColor.apply(YELLOW, ("Architecture Structure is blank, skipping.")));
         }
         else {
 
-            log.info(formatYellow("Architecture Structure creation started."));
+            log.info(formatColor.apply(YELLOW, ("Architecture Structure creation started.")));
             logConfiguration(config);
 
             final Path                                targetRootDir = buildTargetPathForArch();
@@ -46,7 +47,7 @@ public class ArchDesignStructureWriter {
             readmeAction.accept(targetRootDir, getMainReadme.apply(config.getMainReadme(), config.getModel()));
         }
 
-        log.info(formatYellow("Architecture Structure creation completed."));
+        log.info(formatColor.apply(YELLOW, "Architecture Structure creation completed."));
     }
 
 }

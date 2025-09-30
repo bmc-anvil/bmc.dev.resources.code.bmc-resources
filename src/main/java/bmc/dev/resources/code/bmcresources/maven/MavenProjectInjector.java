@@ -4,9 +4,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.maven.project.MavenProject;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatYellowBold;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -21,13 +23,12 @@ import static java.util.Optional.ofNullable;
  * It can be awkward in tests as we need to manually set it up. With a proper DI framework, with an annotation, we would have it done for us.
  */
 @Slf4j
+@UtilityClass
 public class MavenProjectInjector {
 
     private static final AtomicReference<MavenProject> ATOMIC_MAVEN_PROJECT           = new AtomicReference<>();
     private static final String                        ERROR_MAVEN_PROJECT_NOT_SET    = "mavenProject is null, set it before before usage";
     private static final String                        ERROR_MAVEN_PROJECT_PARAM_NULL = "mavenProject parameter cannot be null";
-
-    private MavenProjectInjector() {}
 
     /**
      * Retrieves the current instance of the MavenProject.
@@ -67,7 +68,7 @@ public class MavenProjectInjector {
         final boolean isSet = ATOMIC_MAVEN_PROJECT.compareAndSet(null, mavenProject);
 
         if (!isSet) {
-            log.warn(formatYellowBold("mavenProject is already initialized"));
+            log.warn(formatBoldColor.apply(YELLOW, "mavenProject is already initialized"));
         }
 
         return isSet;

@@ -14,7 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchitectureExecution.createArchitecture;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesExecution.createResources;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
-import static bmc.dev.resources.code.bmcresources.utils.LogFormattingUtils.formatYellowBold;
+import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.hasPluginVersionChanged;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
@@ -75,20 +76,20 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
         setMavenProject(mavenProject);
 
         if (generalConfig.isSkip()) {
-            log.info(formatYellowBold("Plugin execution skip is set to true. Nothing to do."));
+            log.info(formatBoldColor.apply(YELLOW, "Plugin execution skip is set to true. Nothing to do."));
         }
         else if (hasPluginVersionChanged()) {
-            log.info(formatYellowBold("New Project or different plugin version. Generating Architecture and Resources."));
-            log.info(formatYellowBold("Architecture Structure and Resources creation started."));
+            log.info(formatBoldColor.apply(YELLOW, "New Project or different plugin version. Generating Architecture and Resources."));
+            log.info(formatBoldColor.apply(YELLOW, "Architecture Structure and Resources creation started."));
 
             createResources(resources);
             createArchitecture(architecture);
             stampCurrentPluginVersion();
 
-            log.info(formatYellowBold("Architecture Structure and Resources creation completed."));
+            log.info(formatBoldColor.apply(YELLOW, "Architecture Structure and Resources creation completed."));
         }
         else {
-            log.info(formatYellowBold("No change in plugin version since last run. Nothing to do."));
+            log.info(formatBoldColor.apply(YELLOW, "No change in plugin version since last run. Nothing to do."));
         }
 
         log.info("");
