@@ -247,11 +247,6 @@
             <message key="ws.illegalFollow" value="GenericWhitespace ''{0}'' should followed by whitespace."/>
             <message key="ws.notPreceded" value="GenericWhitespace ''{0}'' is not preceded with whitespace."/>
         </module>
-        <module name="IllegalType">
-            <property name="illegalClassNames" value="var"/>
-            <property name="tokens" value="VARIABLE_DEF"/>
-            <message key="illegal.type" value="Usage of ''var'' keyword is not allowed. Use explicit type declarations."/>
-        </module>
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
             <property name="braceAdjustment" value="4"/>
@@ -388,6 +383,13 @@
             <property name="checkFormat" value="$1"/>
             <!-- The check is suppressed in the next line of code after the comment -->
             <property name="influenceFormat" value="1"/>
+        </module>
+
+        <module name="VariableDeclarationUsage">
+            <property name="tokens" value="VARIABLE_DEF"/>
+            <property name="xpathQuery" value="//VARIABLE_DEF/LITERAL_VAR"/>
+            <property name="message" value="Avoid 'var'; use explicit types."/>
+            <property name="severity" value="error"/>
         </module>
 
         <module name="FinalLocalVariable">
