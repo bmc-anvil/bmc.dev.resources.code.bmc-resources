@@ -25,7 +25,7 @@
 
     <property name="severity" value="${org.checkstyle.bmc.severity}" default="error"/>
 
-    <property name="fileExtensions" value="java, properties, xml, yml, yaml"/>
+    <property name="fileExtensions" value="java, kt, kts, properties, sc, scala, xml, yml, yaml"/>
     <!-- Excludes all 'module-info.java' files              -->
     <!-- See https://checkstyle.org/filefilters/index.html -->
     <module name="BeforeExecutionExclusionFileFilter">
@@ -246,6 +246,11 @@
             <message key="ws.preceded" value="GenericWhitespace ''{0}'' is preceded with whitespace."/>
             <message key="ws.illegalFollow" value="GenericWhitespace ''{0}'' should followed by whitespace."/>
             <message key="ws.notPreceded" value="GenericWhitespace ''{0}'' is not preceded with whitespace."/>
+        </module>
+        <module name="IllegalType">
+            <property name="illegalClassNames" value="var"/>
+            <property name="tokens" value="VARIABLE_DEF"/>
+            <message key="illegal.type" value="Usage of ''var'' keyword is not allowed. Use explicit type declarations."/>
         </module>
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
