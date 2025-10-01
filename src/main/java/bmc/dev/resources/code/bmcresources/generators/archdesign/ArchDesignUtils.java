@@ -12,11 +12,12 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
-import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignReadmeWriter.copyReadme;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceSingle;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.calculateLeftAlignedPadding;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
+import static bmc.dev.resources.code.bmcresources.utils.StringUtils.isNullOrBlank;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.BLUE;
 import static java.util.Optional.ofNullable;
 
@@ -26,9 +27,9 @@ public class ArchDesignUtils {
 
     public static Function<String, String>           getArchStructure          = model -> FOLDER_ARCH_MODELS + "/" + model + "/" + model + CONFIG_EXT;
     public static BiFunction<String, String, String> getMainReadme             = (readme, model) -> ofNullable(readme).orElse(model + ".md");
-    public static Function<String, String>           getReadmesSourceDirectory = model -> FOLDER_ARCH_MODELS + "/" + model + FOLDER_TEMPLATES + "/";
+    public static Function<String, String>           getReadmesSourceDirectory = model -> FOLDER_ARCH_MODELS + "/" + model + "/" + FOLDER_TEMPLATES + "/";
 
-    public static Path buildTargetPathForArch() {
+    public static Path buildBaseTargetPathForArch() {
 
         final MavenProject mavenProject = getMavenProject();
 
@@ -51,7 +52,7 @@ public class ArchDesignUtils {
         log.info(formatColor.apply(BLUE, " --- artifactId: [{}]"), mavenProject.getArtifactId());
         log.info(formatColor.apply(BLUE, " --- groupId: [{}]"), mavenProject.getGroupId());
         log.info(formatColor.apply(BLUE, " --- mavenSourceDirectory: [{}]"), mavenProject.getBuild().getSourceDirectory());
-        log.info(formatColor.apply(BLUE, " --- archTargetDirectory: [{}]"), buildTargetPathForArch());
+        log.info(formatColor.apply(BLUE, " --- archTargetDirectory: [{}]"), buildBaseTargetPathForArch());
         log.info("");
     }
 
@@ -63,12 +64,14 @@ public class ArchDesignUtils {
                     : (folder, readme) -> log.info("Created folder [{}] with readme [{}]", padding.formatted(folder), readme);
     }
 
-    public static BiConsumer<Path, String> resolveReadmeOp(final ArchitectureConfig config) {
+    public static BiConsumer<String, String> resolveReadmeOp(final ArchitectureConfig config, final Path baseTargetPathForArch) {
 
-        final String readmesSourceDir = getReadmesSourceDirectory.apply(config.getModel());
+        final String readmesSource = getReadmesSourceDirectory.apply(config.getModel());
 
         return config.isSkipReadme() ? (_, _) -> {/* no-op */}
-                                     : (targetPath, readmeFile) -> copyReadme(targetPath, readmesSourceDir, readmeFile);
+                                     : (targetFolder, readmeFile) ->
+                       copyResourceSingle(baseTargetPathForArch, readmesSource + readmeFile,
+                                           isNullOrBlank.test(targetFolder) ? readmeFile : targetFolder + "/" + readmeFile);
     }
 
 }

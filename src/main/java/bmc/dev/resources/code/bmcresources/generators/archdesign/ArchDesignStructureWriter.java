@@ -15,6 +15,7 @@ import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectory
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
 import static bmc.dev.resources.code.bmcresources.utils.StringUtils.isNullOrBlank;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.CYAN;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
 
 @Slf4j
@@ -31,20 +32,27 @@ public class ArchDesignStructureWriter {
             log.info(formatColor.apply(YELLOW, ("Architecture Structure creation started.")));
             logConfiguration(config);
 
-            final Path                                targetRootDir = buildTargetPathForArch();
-            final Entry<Integer, Map<String, String>> structureMap  = readConfigFile(getArchStructure.apply(config.getModel())).orElseThrow();
-            final BiConsumer<Path, String>            readmeAction  = resolveReadmeOp(config);
-            final BiConsumer<String, String>          logAction     = resolveLogOp(config.isSkipReadme(), structureMap.getKey());
+            final Path                                baseTargetPathForArch = buildBaseTargetPathForArch();
+            final Entry<Integer, Map<String, String>> structureMap          = readConfigFile(getArchStructure.apply(config.getModel())).orElseThrow();
+            final BiConsumer<String, String>          readmeAction          = resolveReadmeOp(config, baseTargetPathForArch);
+            final BiConsumer<String, String>          logAction             = resolveLogOp(config.isSkipReadme(), structureMap.getKey());
 
             structureMap.getValue().forEach((folder, readme) -> {
-                final Path targetDirectory = targetRootDir.resolve(folder);
+                final Path targetDirectory = baseTargetPathForArch.resolve(folder);
 
                 createDirectory(targetDirectory);
-                readmeAction.accept(targetDirectory, readme);
+
+                if (isNullOrBlank.test(readme)) {
+                    log.debug(formatColor.apply(CYAN, "Creation is either disabled or [{}] is null or blank."), readme);
+                }
+                else {
+                    readmeAction.accept(folder, readme);
+                }
+
                 logAction.accept(folder, readme);
             });
 
-            readmeAction.accept(targetRootDir, getMainReadme.apply(config.getMainReadme(), config.getModel()));
+            readmeAction.accept("", getMainReadme.apply(config.getMainReadme(), config.getModel()));
         }
 
         log.info(formatColor.apply(YELLOW, "Architecture Structure creation completed."));

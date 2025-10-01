@@ -11,7 +11,7 @@ import org.apache.maven.project.MavenProject;
 
 import lombok.SneakyThrows;
 
-import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copySingleResource;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceSingle;
 
 public class DummyProjectForTest {
 
@@ -32,10 +32,11 @@ public class DummyProjectForTest {
         final String testPomFile = "test-pom.xml";
         final Path   source      = Path.of(DummyProjectForTest.class.getResource("/" + testPomFile).getPath()).getParent();
         final Path   tmpDir      = Files.createDirectory(source.resolve("tmp-" + UUID.randomUUID()));
+        final String target      = tmpDir.resolve(testPomFile).toString();
 
-        copySingleResource("/", tmpDir, testPomFile);
+        copyResourceSingle(source, testPomFile, target);
 
-        final File temp = tmpDir.resolve(testPomFile).toFile();
+        final File temp = source.resolve(target).toFile();
         project.setFile(temp);
 
         return project;

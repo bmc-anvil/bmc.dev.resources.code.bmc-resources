@@ -4,13 +4,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
+import bmc.dev.resources.code.bmcresources.io.OSUtilities;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourcesMap;
 import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.readConfigFile;
-import static bmc.dev.resources.code.bmcresources.io.OSUtilities.makeFilesExecutable;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.GREEN;
@@ -49,8 +49,10 @@ public class ResourcesProcessor {
 
         log.info(formatColor.apply(YELLOW, "Processing executable files."));
 
-        final Entry<Integer, Map<String, String>> executableResources = readConfigFile(FILE_RESOURCES_EXECUTABLES).orElseThrow();
-        makeFilesExecutable(executableResources);
+        readConfigFile(FILE_RESOURCES_EXECUTABLES).orElseThrow()
+                                                  .getValue()
+                                                  .keySet()
+                                                  .forEach(OSUtilities::makeFileExecutable);
 
         log.info(formatBoldColor.apply(YELLOW, "BMC-Resources Generation completed."));
     }
