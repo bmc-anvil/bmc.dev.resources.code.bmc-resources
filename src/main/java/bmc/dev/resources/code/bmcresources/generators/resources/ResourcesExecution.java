@@ -1,6 +1,7 @@
 package bmc.dev.resources.code.bmcresources.generators.resources;
 
 import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_COMPLETED_RESOURCE;
@@ -10,6 +11,7 @@ import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatCol
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.GREEN;
 
 @Slf4j
+@UtilityClass
 public class ResourcesExecution {
 
     public static void createResources(final ResourcesConfig resources) {

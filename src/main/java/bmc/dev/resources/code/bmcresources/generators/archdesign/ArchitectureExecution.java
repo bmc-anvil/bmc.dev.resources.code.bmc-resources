@@ -1,6 +1,7 @@
 package bmc.dev.resources.code.bmcresources.generators.archdesign;
 
 import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_COMPLETED_ARCH;
@@ -13,9 +14,8 @@ import static java.lang.System.getProperty;
 import static java.util.Optional.ofNullable;
 
 @Slf4j
+@UtilityClass
 public class ArchitectureExecution {
-
-    private ArchitectureExecution() {}
 
     public static void createArchitecture(final ArchitectureConfig architecture) {
 

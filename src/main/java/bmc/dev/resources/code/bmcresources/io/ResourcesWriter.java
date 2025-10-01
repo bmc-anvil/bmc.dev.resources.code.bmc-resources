@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectory;
@@ -17,9 +18,8 @@ import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Slf4j
+@UtilityClass
 public class ResourcesWriter {
-
-    private ResourcesWriter() {}
 
     public static void writeResourceFile(final Path projectBasePath, final String source, final String target, final String padding) {
 

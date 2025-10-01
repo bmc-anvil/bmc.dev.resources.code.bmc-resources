@@ -2,6 +2,7 @@ package bmc.dev.resources.code.bmcresources.generators.archdesign;
 
 import java.nio.file.Path;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copySingleResource;
@@ -14,9 +15,8 @@ import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.CYAN;
  *
  */
 @Slf4j
+@UtilityClass
 public class ArchDesignReadmeWriter {
-
-    private ArchDesignReadmeWriter() {}
 
     /**
      * Copies the specified readme file from the source directory to the target path.

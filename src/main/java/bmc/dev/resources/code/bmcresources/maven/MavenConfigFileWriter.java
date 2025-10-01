@@ -31,13 +31,8 @@ public class MavenConfigFileWriter {
 
         log.debug(formatColor.apply(CYAN, "lines before filtering: [{}]"), lines);
 
-        if (lines.isEmpty()) {
-            lines.add(updatedPropertyWithPrefix);
-        }
-        else {
-            findPropertyIndex.apply(lines, propertyWithPrefix)
-                             .ifPresentOrElse(index -> lines.set(index, updatedPropertyWithPrefix), () -> lines.add(updatedPropertyWithPrefix));
-        }
+        findPropertyIndex.apply(lines, propertyWithPrefix)
+                         .ifPresentOrElse(index -> lines.set(index, updatedPropertyWithPrefix), () -> lines.add(updatedPropertyWithPrefix));
 
         log.debug(formatColor.apply(CYAN, "lines after filtering: [{}]"), lines);
 

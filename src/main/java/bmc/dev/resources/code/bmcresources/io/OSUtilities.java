@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static java.nio.file.Files.getPosixFilePermissions;
@@ -15,9 +16,8 @@ import static java.nio.file.Files.setPosixFilePermissions;
 import static java.nio.file.attribute.PosixFilePermission.*;
 
 @Slf4j
+@UtilityClass
 public class OSUtilities {
-
-    private OSUtilities() {}
 
     /**
      * Modifies the file permissions to make files executable for the owner, group, and others.

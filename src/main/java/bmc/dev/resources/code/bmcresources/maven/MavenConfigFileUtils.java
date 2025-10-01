@@ -6,13 +6,19 @@ import java.util.function.BiFunction;
 
 import lombok.experimental.UtilityClass;
 
+import static java.util.Optional.ofNullable;
+import static java.util.OptionalInt.empty;
 import static java.util.stream.IntStream.range;
 
 @UtilityClass
 public class MavenConfigFileUtils {
 
-    public static BiFunction<List<String>, String, OptionalInt> findPropertyIndex = (list, property) -> range(0, list.size())
-            .filter(i -> list.get(i).contains(property))
-            .findFirst();
+    public static BiFunction<List<String>, String, OptionalInt> findPropertyIndex = (list, property) ->
+            ofNullable(list)
+                    .map(strings ->
+                                 range(0, strings.size())
+                                         .filter(i -> strings.get(i).contains(property))
+                                         .findFirst())
+                    .orElse(empty());
 
 }

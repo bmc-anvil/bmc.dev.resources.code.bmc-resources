@@ -1,5 +1,8 @@
 package bmc.dev.resources.code.bmcresources;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Constants {
 
     public static final String COMMENT_PREFIX             = "#";

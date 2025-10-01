@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 
-import bmc.dev.resources.code.bmcresources.Constants;
 import lombok.experimental.UtilityClass;
 
 import static bmc.dev.resources.code.bmcresources.Constants.COMMENT_PREFIX;
@@ -55,23 +54,17 @@ public class BMCConfigFileUtils {
 
     /**
      * A {@link Function} that computes the maximum string length from a given {@link Collection} of strings.
-     * <p>
-     * The function iterates over all strings in the collection, maps each string to its length,
-     * and determines the maximum length. If the collection is empty, it returns 0.
-     * <p>
-     * It can be used to determine the longest string length in a group of strings for further processing,
-     * such as formatting or alignment.
      */
     public static final Function<Collection<String>, Integer> getMaxStringLengthFromCollection =
             strings -> strings.stream().map(String::length).max(Integer::compareTo).orElse(0);
 
     /**
-     * A {@link Predicate} used to filter out null, blank or comment lines from a collection of strings.
+     * A {@link Predicate} used to filter out from a collection of strings:
+     * <br>- null / blank as evaluated by {@link StringUtils#isNullOrBlank}.
+     * <br>- comment lines
+     * <br>- non parseable lines (i.e. starting with a separator, etc...).
      * <p>
-     * A string is considered null or blank, as evaluated by {@link StringUtils#isNullOrBlank}.
-     * Additionally, a string is treated as a comment if it starts with the predefined comment prefix {@link Constants#COMMENT_PREFIX}
-     * <p>
-     * This predicate returns {@code true} for strings that are neither empty/blank nor comments.
+     * This predicate returns {@code true} for strings that are neither empty/blank nor comments, etc.
      */
     public static final Predicate<String> isLineProcessable =
             input -> !(isNullOrBlank.test(input) || input.trim().startsWith(COMMENT_PREFIX) || input.trim().startsWith(STRUCTURE_SEPARATOR));

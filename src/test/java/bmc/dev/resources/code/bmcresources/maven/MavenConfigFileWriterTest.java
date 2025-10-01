@@ -18,6 +18,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class MavenConfigFileWriterTest extends InjectorResetForTest {
 
     @Test
+    void writeAllProperties_modifyingExistingProperty_propertyIsModifiedInPlaceRestIsUntouched() {
+
+        final MavenProject project                  = createWithTestBaseDir();
+        final String       resourcesNotCompleted    = MVN_PREFIX + PROP_COMPLETED_RESOURCE + "=false";
+        final String       architectureNotCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=false";
+        final String       property_0               = "test.property.0";
+        final String       property_1               = "test.property.1";
+        final String       property_2               = "test.property.2";
+        setMavenProject(project);
+
+        writeMavenProperty(property_0, "00");
+        writeMavenProperty(PROP_COMPLETED_ARCH, "true");
+        writeMavenProperty(property_1, "01");
+        stampCurrentPluginVersion();
+        writeMavenProperty(PROP_COMPLETED_RESOURCE, "true");
+        writeMavenProperty(property_2, "02");
+
+        // rewrite an existing prop to test inplace modification
+        writeMavenProperty(PROP_COMPLETED_ARCH, "false");
+        writeMavenProperty(PROP_COMPLETED_RESOURCE, "false");
+
+        final List<String> strings = readAllLinesFromFile(project.getBasedir().toPath().resolve(".mvn", "maven.config"));
+
+        assertEquals(architectureNotCompleted, strings.get(1));
+        assertEquals(resourcesNotCompleted, strings.get(4));
+    }
+
+    @Test
     void writeAllProperties_readsAllProperties() {
 
         final MavenProject project               = createWithTestBaseDir();
@@ -37,7 +65,6 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         assertEquals(architectureCompleted, strings.get(0));
         assertEquals(resourcesCompleted, strings.get(1));
         assertEquals(versionStamp, strings.get(2));
-
     }
 
     @Test
@@ -68,7 +95,6 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         assertEquals(MVN_PREFIX + property_1 + "=01", strings.get(3));
         assertEquals(versionStamp, strings.get(4));
         assertEquals(MVN_PREFIX + property_2 + "=02", strings.get(5));
-
     }
 
 }

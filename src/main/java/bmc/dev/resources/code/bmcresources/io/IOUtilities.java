@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
@@ -20,9 +21,8 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 @Slf4j
+@UtilityClass
 public class IOUtilities {
-
-    private IOUtilities() {}
 
     public static void copySingleResource(final String sourceDir, final Path targetPath, final String resource) {
 

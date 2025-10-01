@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
@@ -19,6 +20,7 @@ import static java.lang.System.getProperty;
 import static java.util.Optional.ofNullable;
 
 @Slf4j
+@UtilityClass
 public class ResourcesProcessor {
 
     public static void processResources(final ResourcesConfig config) {

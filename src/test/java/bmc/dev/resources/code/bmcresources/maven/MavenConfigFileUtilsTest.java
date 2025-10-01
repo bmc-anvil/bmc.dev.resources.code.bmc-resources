@@ -42,4 +42,12 @@ class MavenConfigFileUtilsTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    void listIsNull_returnsOptionalEmpty() {
+
+        final OptionalInt result = findPropertyIndex.apply(null, WALDO);
+
+        assertTrue(result.isEmpty());
+    }
+
 }

@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 
 import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignUtils.*;
@@ -17,9 +18,8 @@ import static bmc.dev.resources.code.bmcresources.utils.StringUtils.isNullOrBlan
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
 
 @Slf4j
+@UtilityClass
 public class ArchDesignStructureWriter {
-
-    private ArchDesignStructureWriter() {}
 
     public static void processArchitecture(final ArchitectureConfig config) {
 

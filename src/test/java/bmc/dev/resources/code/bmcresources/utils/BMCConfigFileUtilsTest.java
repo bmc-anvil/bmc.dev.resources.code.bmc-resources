@@ -2,9 +2,9 @@ package bmc.dev.resources.code.bmcresources.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +17,6 @@ import static bmc.dev.resources.code.bmcresources.Constants.STRUCTURE_SEPARATOR;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BMCConfigFileUtilsTest {
@@ -90,6 +89,28 @@ class BMCConfigFileUtilsTest {
         assertEquals("adapters/in/rest/dtos/common", keys.get(4));
     }
 
+    @Test
+    void getMaxStringLengthFromCollection_withData_returnsLengthOfLongestString() {
+
+        final String       longestString = "thisWillBeTheLongestString";
+        final List<String> stringList    = List.of("this", "is", "a", "list", "of", "strings", longestString);
+        final Set<String>  stringSet     = Set.of("this", "is", "a", "list", "of", "strings", longestString);
+
+        assertEquals(longestString.length(), getMaxStringLengthFromCollection.apply(stringList));
+        assertEquals(longestString.length(), getMaxStringLengthFromCollection.apply(stringSet));
+    }
+
+    @Test
+    void getMaxStringLengthFromCollection_withNoData_returnsZero() {
+
+        final List<String> stringList = new ArrayList<>();
+        final Set<String>  stringSet  = new HashSet<>();
+
+        assertEquals(0, getMaxStringLengthFromCollection.apply(stringList));
+        assertEquals(0, getMaxStringLengthFromCollection.apply(stringSet));
+
+    }
+
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "   ", "  " + COMMENT_PREFIX + "  ", "  " + STRUCTURE_SEPARATOR + "  ", COMMENT_PREFIX, STRUCTURE_SEPARATOR})
@@ -107,13 +128,31 @@ class BMCConfigFileUtilsTest {
     }
 
     @Test
-    void toLinkedHashMap_withEntries_returnsAHashmapWithAllEntries() {
+    void toLinkedHashMap_withDuplicateEntries_returnsAHashmapKeepingTheExistingEntry() {
+
+        final String duplicateKey  = "this/is/a/duplicate";
+        final String existingValue = "entryExisting";
+
+        final Entry<String, String> entry01 = createMapEntry.apply("this/is/an:entry");
+        final Entry<String, String> entry02 = createMapEntry.apply(duplicateKey + ":" + existingValue);
+        final Entry<String, String> entry03 = createMapEntry.apply(duplicateKey + ":entryRepeated");
+        final Entry<String, String> entry04 = createMapEntry.apply("this/is/yet/another:entryDupe");
+
+        final Map<String, String> collectMap = Stream.of(entry01, entry02, entry03, entry04).collect(toLinkedHashMap);
+
+        assertInstanceOf(LinkedHashMap.class, collectMap);
+        assertEquals(3, collectMap.size());
+        assertEquals("entryExisting", collectMap.get(duplicateKey));
+    }
+
+    @Test
+    void toLinkedHashMap_withNoDuplicateEntries_returnsAHashmapWithAllEntries() {
 
         final Entry<String, String> entry01 = createMapEntry.apply("this/is/an:entry");
         final Entry<String, String> entry02 = createMapEntry.apply("this/is/another:entry");
         final Entry<String, String> entry03 = createMapEntry.apply("this/is/yet/another:entry");
 
-        final Map<String, String> collectMap = of(entry01, entry02, entry03).collect(toLinkedHashMap);
+        final Map<String, String> collectMap = Stream.of(entry01, entry02, entry03).collect(toLinkedHashMap);
 
         assertInstanceOf(LinkedHashMap.class, collectMap);
         assertEquals(3, collectMap.size());
