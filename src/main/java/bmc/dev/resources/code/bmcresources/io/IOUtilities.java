@@ -100,6 +100,13 @@ public class IOUtilities {
         }
     }
 
+    /**
+     * Creates a directory at the specified target path.
+     * <p>
+     * If intermediate directories do not exist, they will also be created.
+     *
+     * @param target the {@link Path} of the directory to be created
+     */
     public static void createDirectory(final Path target) {
 
         try {
@@ -142,7 +149,8 @@ public class IOUtilities {
             log.debug(formatColor.apply(CYAN, "writing all lines [{}]"), linesToWrite);
             write(mavenConfigPath, linesToWrite, UTF_8, CREATE, TRUNCATE_EXISTING);
         }
-        catch (final IOException e) {
+        catch (final Exception e) {
+            log.error("Error writing to [{}]", mavenConfigPath, e);
             throw new RuntimeException(e);
         }
     }

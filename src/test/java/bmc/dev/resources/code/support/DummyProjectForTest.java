@@ -1,7 +1,6 @@
 package bmc.dev.resources.code.support;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
@@ -12,6 +11,7 @@ import org.apache.maven.project.MavenProject;
 import lombok.SneakyThrows;
 
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceSingle;
+import static java.nio.file.Files.createDirectory;
 
 public class DummyProjectForTest {
 
@@ -31,8 +31,8 @@ public class DummyProjectForTest {
 
         final String testPomFile = "test-pom.xml";
         final Path   source      = Path.of(DummyProjectForTest.class.getResource("/" + testPomFile).getPath()).getParent();
-        final Path   tmpDir      = Files.createDirectory(source.resolve("tmp-" + UUID.randomUUID()));
-        final String target      = tmpDir.resolve(testPomFile).toString();
+        final Path   tempDirPath = createDirectory(source.resolve("tmp-" + UUID.randomUUID()));
+        final String target      = tempDirPath.resolve(testPomFile).toString();
 
         copyResourceSingle(source, testPomFile, target);
 
