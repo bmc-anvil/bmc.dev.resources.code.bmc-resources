@@ -55,8 +55,7 @@ public class ConfigFileReader {
             }
 
             return of(entry(maxKeyLength, configMap));
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             final String errorMessage = "Resource not found on classpath: [%s]".formatted(configFile);
             log.error(errorMessage, e);
             throw new IllegalArgumentException(errorMessage, e);

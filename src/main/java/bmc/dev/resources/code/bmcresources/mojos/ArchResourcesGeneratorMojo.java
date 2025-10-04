@@ -77,8 +77,7 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
 
         if (generalConfig.isSkip()) {
             log.info(formatBoldColor.apply(YELLOW, "Plugin execution skip is set to true. Nothing to do."));
-        }
-        else if (hasPluginVersionChanged()) {
+        } else if (hasPluginVersionChanged()) {
             log.info(formatBoldColor.apply(YELLOW, "New Project or different plugin version. Generating Architecture and Resources."));
             log.info(formatBoldColor.apply(YELLOW, "Architecture Structure and Resources creation started."));
 
@@ -87,8 +86,7 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
             stampCurrentPluginVersion();
 
             log.info(formatBoldColor.apply(YELLOW, "Architecture Structure and Resources creation completed."));
-        }
-        else {
+        } else {
             log.info(formatBoldColor.apply(YELLOW, "No change in plugin version since last run. Nothing to do."));
         }
 

@@ -30,8 +30,7 @@ public class ResourcesUtils {
                 log.debug(formatColor.apply(CYAN, "Directory: [{}]"), sourcePathAsResource);
 
                 copyResourceFolder(source, Path.of(target));
-            }
-            else {
+            } else {
                 log.debug(formatColor.apply(CYAN, "File: [{}]"), sourcePathAsResource);
                 copyResourceSingle(projectBasePath, source, target);
             }

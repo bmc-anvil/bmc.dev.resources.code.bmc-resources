@@ -32,8 +32,7 @@ public class MavenConfigFileReader {
                         .filter(line -> line.contains(propertyToRead))
                         .map(line -> line.split("=", 2)[1])
                         .findFirst();
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             log.error("Error reading property [{}] from maven.config", propertyToRead, e);
             throw new RuntimeException(e);
         }

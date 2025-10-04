@@ -18,8 +18,7 @@ public class ResourcesExecution {
 
         if (resources.isSkip()) {
             log.info(formatColor.apply(GREEN, "{}Skipping generation of resources. Skip is [{}]{}"), true);
-        }
-        else {
+        } else {
             processResources(resources);
             writeMavenProperty(PROP_COMPLETED_RESOURCE, "true");
         }

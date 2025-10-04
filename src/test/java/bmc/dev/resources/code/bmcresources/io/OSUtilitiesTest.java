@@ -44,6 +44,28 @@ class OSUtilitiesTest extends InjectorResetForTest {
 
     @SneakyThrows
     @Test
+    void makeFilesExecutable_withExistingFile_shouldUpdatePermissions() {
+
+        final String       nothingToDoFileName   = "nothingToDoFileName.sh";
+        final List<String> nothingToDoBashScript = of("#!/bin/bash");
+        final Path         executableFilePath    = createWithTestBaseDir().getBasedir().toPath().resolve(nothingToDoFileName);
+
+        write(executableFilePath, nothingToDoBashScript, UTF_8, CREATE, TRUNCATE_EXISTING);
+        final Set<PosixFilePermission> originalFilePermissions = getPosixFilePermissions(executableFilePath);
+        assertFalse(originalFilePermissions.contains(OWNER_EXECUTE));
+        assertFalse(originalFilePermissions.contains(GROUP_EXECUTE));
+        assertFalse(originalFilePermissions.contains(OTHERS_EXECUTE));
+
+        makeFileExecutable(executableFilePath.toString());
+        final Set<PosixFilePermission> updatedFilePermissions = getPosixFilePermissions(executableFilePath);
+        assertTrue(updatedFilePermissions.contains(OWNER_EXECUTE));
+        assertTrue(updatedFilePermissions.contains(GROUP_EXECUTE));
+        assertTrue(updatedFilePermissions.contains(OTHERS_EXECUTE));
+
+    }
+
+    @SneakyThrows
+    @Test
     void makeFilesExecutable_withMockedNonPosixAndNotSettingPermissions_shouldNotChangeFiles() {
 
         final String       nothingToDoFileName   = "nothingToDoFileName.sh";
@@ -73,28 +95,6 @@ class OSUtilitiesTest extends InjectorResetForTest {
         assertFalse(updatedFilePermissions.contains(OWNER_EXECUTE));
         assertFalse(updatedFilePermissions.contains(GROUP_EXECUTE));
         assertFalse(updatedFilePermissions.contains(OTHERS_EXECUTE));
-    }
-
-    @SneakyThrows
-    @Test
-    void makeFilesExecutable_withExistingFile_shouldUpdatePermissions() {
-
-        final String       nothingToDoFileName   = "nothingToDoFileName.sh";
-        final List<String> nothingToDoBashScript = of("#!/bin/bash");
-        final Path         executableFilePath    = createWithTestBaseDir().getBasedir().toPath().resolve(nothingToDoFileName);
-
-        write(executableFilePath, nothingToDoBashScript, UTF_8, CREATE, TRUNCATE_EXISTING);
-        final Set<PosixFilePermission> originalFilePermissions = getPosixFilePermissions(executableFilePath);
-        assertFalse(originalFilePermissions.contains(OWNER_EXECUTE));
-        assertFalse(originalFilePermissions.contains(GROUP_EXECUTE));
-        assertFalse(originalFilePermissions.contains(OTHERS_EXECUTE));
-
-        makeFileExecutable(executableFilePath.toString());
-        final Set<PosixFilePermission> updatedFilePermissions = getPosixFilePermissions(executableFilePath);
-        assertTrue(updatedFilePermissions.contains(OWNER_EXECUTE));
-        assertTrue(updatedFilePermissions.contains(GROUP_EXECUTE));
-        assertTrue(updatedFilePermissions.contains(OTHERS_EXECUTE));
-
     }
 
     @SneakyThrows

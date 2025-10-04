@@ -40,7 +40,7 @@ public class ArchDesignUtils {
         return Path.of(sourceDirectory, groupId, artifactId);
     }
 
-    public static void logConfiguration(final ArchitectureConfig config) {
+    public static void logArchitectureConfiguration(final ArchitectureConfig config) {
 
         final MavenProject mavenProject = getMavenProject();
 
@@ -71,7 +71,7 @@ public class ArchDesignUtils {
         return config.isSkipReadme() ? (_, _) -> {/* no-op */}
                                      : (targetFolder, readmeFile) ->
                        copyResourceSingle(baseTargetPathForArch, readmesSource + readmeFile,
-                                           isNullOrBlank.test(targetFolder) ? readmeFile : targetFolder + "/" + readmeFile);
+                                          isNullOrBlank.test(targetFolder) ? readmeFile : targetFolder + "/" + readmeFile);
     }
 
 }

@@ -23,8 +23,7 @@ public class ArchitectureExecution {
 
         if (architecture.isSkip() || archCompleted) {
             log.info(formatColor.apply(GREEN, "Skipping generation of architecture. Skip is [{}], Completed is [{}]"), architecture.isSkip(), archCompleted);
-        }
-        else {
+        } else {
             processArchitecture(architecture);
             writeMavenProperty(PROP_COMPLETED_ARCH, "true");
         }

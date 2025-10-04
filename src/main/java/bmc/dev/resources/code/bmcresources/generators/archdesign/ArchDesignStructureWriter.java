@@ -26,11 +26,10 @@ public class ArchDesignStructureWriter {
 
         if (isNullOrBlank.test(config.getModel())) {
             log.warn(formatBoldColor.apply(YELLOW, ("Architecture Structure is blank, skipping.")));
-        }
-        else {
+        } else {
 
             log.info(formatColor.apply(YELLOW, ("Architecture Structure creation started.")));
-            logConfiguration(config);
+            logArchitectureConfiguration(config);
 
             final Path                                baseTargetPathForArch = buildBaseTargetPathForArch();
             final Entry<Integer, Map<String, String>> structureMap          = readConfigFile(getArchStructure.apply(config.getModel())).orElseThrow();
@@ -44,8 +43,7 @@ public class ArchDesignStructureWriter {
 
                 if (isNullOrBlank.test(readme)) {
                     log.debug(formatColor.apply(CYAN, "Creation is either disabled or [{}] is null or blank."), readme);
-                }
-                else {
+                } else {
                     readmeAction.accept(folder, readme);
                 }
 

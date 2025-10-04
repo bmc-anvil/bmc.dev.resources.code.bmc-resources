@@ -105,7 +105,7 @@
             <property name="id" value="RightCurlyAlone"/>
             <property name="option" value="alone"/>
             <property name="tokens" value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, STATIC_INIT, INSTANCE_INIT, ANNOTATION_DEF, ENUM_DEF,
-                      INTERFACE_DEF, RECORD_DEF, COMPACT_CTOR_DEF, LITERAL_SWITCH, LITERAL_CASE, LITERAL_FINALLY,LITERAL_TRY, LITERAL_CATCH, LITERAL_IF, LITERAL_ELSE, LITERAL_DO"/>
+                      INTERFACE_DEF, RECORD_DEF, COMPACT_CTOR_DEF, LITERAL_SWITCH, LITERAL_CASE, LITERAL_FINALLY"/>
         </module>
         <module name="SuppressionXpathSingleFilter">
             <!-- suppression is required till https://github.com/checkstyle/checkstyle/issues/7541 -->
@@ -390,6 +390,17 @@
         <module name="FinalLocalVariable">
             <property name="tokens" value="VARIABLE_DEF,PARAMETER_DEF"/>
             <property name="validateEnhancedForLoopVariable" value="true"/>
+        </module>
+
+        <module name="MethodLength">
+            <property name="tokens" value="METHOD_DEF"/>
+            <property name="max" value="25"/>
+            <property name="countEmpty" value="false"/>
+        </module>
+
+        <module name="ParameterNumber">
+            <property name="max" value="5"/>
+            <property name="ignoreOverriddenMethods" value="true"/>
         </module>
     </module>
 </module>

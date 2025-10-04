@@ -39,18 +39,16 @@ public class OSUtilities {
             permissions.add(OTHERS_EXECUTE);
 
             setPosixFilePermissions(fileToMakeExecutablePath, permissions);
-
             log.info("file [{}] is now executable", fileToMakeExecutable);
-        }
 
-        catch (final UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             // Fallback for Windows maybe, cannot test it myself
             final boolean isPermissionSet = fileToMakeExecutablePath.toFile().setExecutable(true, false);
             if (!isPermissionSet) {
                 log.error("Could not set permission to execute to file [{}]", fileToMakeExecutable, e);
             }
-        }
-        catch (final Exception e) {
+
+        } catch (final Exception e) {
             log.error("Error changing file permissions for [{}]", fileToMakeExecutable, e);
             throw new RuntimeException(e);
         }

@@ -37,8 +37,7 @@ public class ResourcesProcessor {
 
         if (!config.isOverwriteUserResources() && resourcesCompleted) {
             log.info(formatColor.apply(GREEN, "Skipping Processing user Resources. Overwrite is [{}], Completed is [{}]"), false, true);
-        }
-        else {
+        } else {
             log.info(formatColor.apply(YELLOW, "Processing user Resources."));
 
             final Entry<Integer, Map<String, String>> userResources = readConfigFile(FILE_RESOURCES_USER).orElseThrow();

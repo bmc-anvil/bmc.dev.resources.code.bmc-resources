@@ -60,16 +60,14 @@ public class IOUtilities {
 
                     if (isDirectory(path)) {
                         createDirectory(targetPath);
-                    }
-                    else {
+                    } else {
                         createDirectory(targetPath.getParent());
                         copy(path, targetPath, REPLACE_EXISTING);
                         log.info("Resource [{}] created", path);
                     }
                 }
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             log.error("Error processing source file: [{}] / target [{}]", sourceFolderInJar, targetFolder, e);
             throw new RuntimeException(e);
         }
@@ -88,13 +86,11 @@ public class IOUtilities {
 
             if (sourceStream == null) {
                 log.warn(formatBoldColor.apply(YELLOW, "Could not find [{}]"), sourceResourceName);
-            }
-            else {
+            } else {
                 copy(sourceStream, baseTargetPath.resolve(targetResourceName), REPLACE_EXISTING);
                 log.debug("Resource [{}] created", targetResourceName);
             }
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             log.error("Error copying resource: [{}] to [{}] ", sourceResourceName, targetResourceName, e);
             throw new RuntimeException(e);
         }
@@ -111,8 +107,7 @@ public class IOUtilities {
 
         try {
             createDirectories(target);
-        }
-        catch (final IOException ioe) {
+        } catch (final IOException ioe) {
             log.error("could not create directory [{}]", target, ioe);
         }
     }
@@ -130,8 +125,7 @@ public class IOUtilities {
 
         try {
             return exists(mavenConfigPath) ? readAllLines(mavenConfigPath, UTF_8) : new ArrayList<>();
-        }
-        catch (final IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -148,8 +142,7 @@ public class IOUtilities {
         try {
             log.debug(formatColor.apply(CYAN, "writing all lines [{}]"), linesToWrite);
             write(mavenConfigPath, linesToWrite, UTF_8, CREATE, TRUNCATE_EXISTING);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             log.error("Error writing to [{}]", mavenConfigPath, e);
             throw new RuntimeException(e);
         }
