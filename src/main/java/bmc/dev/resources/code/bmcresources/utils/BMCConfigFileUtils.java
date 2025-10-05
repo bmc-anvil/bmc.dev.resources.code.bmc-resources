@@ -2,22 +2,22 @@ package bmc.dev.resources.code.bmcresources.utils;
 
 import java.io.BufferedReader;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 
+import bmc.dev.resources.code.bmcresources.config.ArchitectureEntry;
+import bmc.dev.resources.code.bmcresources.config.ResourceEntry;
 import lombok.experimental.UtilityClass;
 
 import static bmc.dev.resources.code.bmcresources.Constants.COMMENT_PREFIX;
 import static bmc.dev.resources.code.bmcresources.Constants.STRUCTURE_SEPARATOR;
 import static bmc.dev.resources.code.bmcresources.utils.StringUtils.isNullOrBlank;
-import static java.lang.String.CASE_INSENSITIVE_ORDER;
-import static java.util.Map.Entry;
-import static java.util.Map.Entry.comparingByKey;
-import static java.util.Map.entry;
-import static java.util.stream.Collectors.toMap;
+import static java.util.Comparator.comparing;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 /**
  * Utility class providing functionality for processing and manipulating BMC resources configuration files.
@@ -32,32 +32,37 @@ public class BMCConfigFileUtils {
      * The input integer represents the desired width of the formatted string, and the resulting
      * format specifier will be a left-aligned string placeholder (e.g., "%-10s" for width 10).
      */
-    public static final Function<Integer, String> calculateLeftAlignedPadding = length -> "%-" + length + "s";
-
+    public static final  Function<Integer, String>                         calculateLeftAlignedPadding = length -> "%-" + length + "s";
     /**
-     * A {@link Function} that takes a {@link String} and splits it into an {@link Entry} of type {@link String}, {@link String}.
-     * <p>
-     * The separator can be used to parse, for example, folder names and their corresponding readme or content.
-     * If no content is specified, the value portion of the {@link Entry} will default to an empty string.
+     * A {@link Function} that takes a {@link String} and converts it into an {@link ArchitectureEntry}.
      * <p>
      * The function trims any leading or trailing whitespace from both parts of the split input string.
-     *
-     * @see Entry
-     * @see Map#entry(Object, Object)
      */
-    public static final Function<String, Entry<String, String>> createMapEntry = line -> {
-        final String[] lineParts = line.split(STRUCTURE_SEPARATOR);
-        final String   key       = lineParts[0].trim();
-        final String   value     = lineParts.length > 1 ? lineParts[1].trim() : "";
-        return entry(key, value);
-    };
+    public static final  Function<String, ArchitectureEntry>               createArchitectureEntry     = line -> {
+        final String[]         lineParts = line.split(STRUCTURE_SEPARATOR);
+        final String           folder    = lineParts[0].trim();
+        final Optional<String> readme    = lineParts.length > 1 ? of(lineParts[1].trim()) : empty();
 
+        return new ArchitectureEntry(folder, readme);
+    };
+    /**
+     * A {@link Function} that takes a {@link String} and converts it into an {@link ResourceEntry}.
+     * <p>
+     * The function trims any leading or trailing whitespace from both parts of the split input string.
+     */
+    public static final  Function<String, ResourceEntry>                   createResourceEntry         = line -> {
+        final String[]         lineParts  = line.split(STRUCTURE_SEPARATOR);
+        final String           source     = lineParts[0].trim();
+        final String           target     = lineParts.length > 1 ? lineParts[1].trim() : "";
+        final Optional<String> permission = lineParts.length > 2 ? of(lineParts[2].trim()) : empty();
+
+        return new ResourceEntry(source, target, permission);
+    };
     /**
      * A {@link Function} that computes the maximum string length from a given {@link Collection} of strings.
      */
-    public static final Function<Collection<String>, Integer> getMaxStringLengthFromCollection =
+    public static final  Function<Collection<String>, Integer>             getMaxStringLength          =
             strings -> strings.stream().map(String::length).max(Integer::compareTo).orElse(0);
-
     /**
      * A {@link Predicate} used to filter out from a collection of strings:
      * <br>- null / blank as evaluated by {@link StringUtils#isNullOrBlank}.
@@ -66,39 +71,39 @@ public class BMCConfigFileUtils {
      * <p>
      * This predicate returns {@code true} for strings that are neither empty/blank nor comments, etc.
      */
-    public static final Predicate<String> isLineProcessable =
+    public static final  Predicate<String>                                 isLineProcessable           =
             input -> !(isNullOrBlank.test(input) || input.trim().startsWith(COMMENT_PREFIX) || input.trim().startsWith(STRUCTURE_SEPARATOR));
-
     /**
-     * A {@link Collector} that accumulates {@link Map.Entry} elements into a {@link LinkedHashMap}.
-     * <p>
-     * The collector ensures that the entries are collected in the order they are encountered.
-     * <p>
-     * If duplicate keys are encountered while collecting, the existing key-value pair is retained, and the duplicate is ignored.
-     * <p>
-     * This collector is particularly useful for preserving the insertion order of key-value pairs while converting a collection
-     * of {@link Map.Entry} elements into a {@link LinkedHashMap}.
+     * A static final comparator that compares instances of {@link ArchitectureEntry} based on their {@link ArchitectureEntry#folder()} values.
      */
-    public static final Collector<Entry<String, String>, ?, LinkedHashMap<String, String>> toLinkedHashMap =
-            toMap(Entry::getKey, Entry::getValue, (existing, _) -> existing, LinkedHashMap::new);
-
+    private static final Comparator<? super ArchitectureEntry>             comparingByFolder           = comparing(ArchitectureEntry::folder);
     /**
      * A {@link Function} that processes a {@link BufferedReader} to extract configuration data.
      * <p>
-     * The input is expected to be read line by line, with each line potentially representing a key-value pair.
+     * The input is expected to be read line by line, with each line potentially representing a {@link ArchitectureEntry}.
      * <p>
-     * The steps in the transformation are as follows:
-     * <br> - Lines that are empty or start with a comment marker are filtered out.
-     * <br> - Remaining lines are mapped into entries of a {@link Map} using {@code createMapEntry}, which splits each line into key-value pairs.
-     * <br> - The resulting map entries are sorted by their keys in a case-insensitive order.
-     * <br> - The sorted entries are collected into a {@link LinkedHashMap} to maintain the ordering.
-     * <p>
-     * The final result is a sorted, ordered map of configuration key-value pairs.
+     * The result is a sorted, ordered List of {@link ArchitectureEntry}.
      */
-    public static final Function<BufferedReader, Map<String, String>> extractConfiguration = reader -> reader.lines()
-                                                                                                             .filter(isLineProcessable)
-                                                                                                             .map(createMapEntry)
-                                                                                                             .sorted(comparingByKey(CASE_INSENSITIVE_ORDER))
-                                                                                                             .collect(toLinkedHashMap);
+    public static final  Function<BufferedReader, List<ArchitectureEntry>> extractArchitectureModel    = reader -> reader.lines()
+                                                                                                                         .filter(isLineProcessable)
+                                                                                                                         .map(createArchitectureEntry)
+                                                                                                                         .sorted(comparingByFolder)
+                                                                                                                         .toList();
+    /**
+     * A static final comparator that compares instances of {@link ResourceEntry} based on their {@link ResourceEntry#source()} values.
+     */
+    private static final Comparator<? super ResourceEntry>                 comparingBySource           = comparing(ResourceEntry::source);
+    /**
+     * A {@link Function} that processes a {@link BufferedReader} to extract configuration data.
+     * <p>
+     * The input is expected to be read line by line, with each line potentially representing a {@link ResourceEntry}.
+     * <p>
+     * The result is a sorted, ordered List of {@link ResourceEntry}.
+     */
+    public static final  Function<BufferedReader, List<ResourceEntry>>     extractResources            = reader -> reader.lines()
+                                                                                                                         .filter(isLineProcessable)
+                                                                                                                         .map(createResourceEntry)
+                                                                                                                         .sorted(comparingBySource)
+                                                                                                                         .toList();
 
 }

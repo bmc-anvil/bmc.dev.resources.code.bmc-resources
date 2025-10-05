@@ -13,6 +13,7 @@ import bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.CYAN;
@@ -35,7 +36,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 public class IOUtilities {
 
     /**
-     * Copies the contents of a specified folder within a JAR file into a specified target folder.
+     * Copies the contents of a specified folder within a JAR file into a specified target folder relative to the project's base path.
      * Subdirectories and files from the source folder are recursively copied to the target location.
      *
      * @param sourceFolderInJar the path to the folder within the JAR file to be copied (relative path within the JAR)
@@ -47,19 +48,21 @@ public class IOUtilities {
 
         try (final FileSystem fs = newFileSystem(Path.of(jarUrl.toURI()), (ClassLoader) null)) {
 
+            final Path projectBasePath     = getMavenProject().getBasedir().toPath();
             final Path sourceFolderInJarFS = fs.getPath("/" + sourceFolderInJar);
 
             try (final Stream<Path> filePaths = walk(sourceFolderInJarFS)) {
 
                 for (final Path path : filePaths.toList()) {
-                    final Path relativePath = sourceFolderInJarFS.relativize(path);
-                    final Path targetPath   = targetFolder.resolve(relativePath.toString());
+                    final Path relativePath       = sourceFolderInJarFS.relativize(path);
+                    final Path targetPath         = targetFolder.resolve(relativePath.toString());
+                    final Path targetPathOnRealFs = projectBasePath.resolve(targetPath);
 
                     if (isDirectory(path)) {
-                        createDirectory(targetPath);
+                        createDirectory(targetPathOnRealFs);
                     } else {
-                        createDirectory(targetPath.getParent());
-                        copy(path, targetPath, REPLACE_EXISTING);
+                        //createDirectory(targetPathOnRealFs.getParent());
+                        copy(path, targetPathOnRealFs, REPLACE_EXISTING);
                         log.info("Resource [{}] created", path);
                     }
                 }

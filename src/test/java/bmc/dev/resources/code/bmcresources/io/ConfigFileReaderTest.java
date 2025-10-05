@@ -1,54 +1,54 @@
 package bmc.dev.resources.code.bmcresources.io;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import bmc.dev.resources.code.bmcresources.config.ResourceEntry;
+
+import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.readResourcesConfigFile;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigFileReaderTest {
 
     @Test
-    void readConfigFile_withEmptyConfigFile_shouldReturnCorrectMap() {
+    void readResourcesConfigFile_withEmptyResourcesConfigFile_shouldReturnCorrectList() {
 
         final String configFile = "clean_ddd_hexa_empty_for_tests.config";
 
-        final Optional<Map.Entry<Integer, Map<String, String>>> structureMap = ConfigFileReader.readConfigFile(configFile);
+        final List<ResourceEntry> configEntries = readResourcesConfigFile(configFile);
 
-        assertTrue(structureMap.isEmpty());
+        assertTrue(configEntries.isEmpty());
     }
 
     @Test
-    void readConfigFile_withExistingConfigFile_withNonValidData_shouldReturnCorrectMap() {
+    void readResourcesConfigFile_withExistingResourcesConfigFile_withNonValidData_shouldReturnCorrectList() {
 
         final String configFile = "clean_ddd_hexa_non_processable_for_tests.config";
 
-        final Optional<Map.Entry<Integer, Map<String, String>>> structureMap = ConfigFileReader.readConfigFile(configFile);
+        final List<ResourceEntry> configEntries = readResourcesConfigFile(configFile);
 
-        assertTrue(structureMap.isEmpty());
+        assertTrue(configEntries.isEmpty());
 
     }
 
     @Test
-    void readConfigFile_withExistingConfigFile_withValidData_shouldReturnCorrectMap() {
+    void readResourcesConfigFile_withExistingResourcesConfigFile_withValidData_shouldReturnCorrectList() {
 
-        final String configFile          = "clean_ddd_hexa_for_tests.config";
-        final String biggestStringInFile = "adapters/in/rest/dtos/common";
+        final String configFile = "clean_ddd_hexa_for_tests.config";
 
-        final Optional<Map.Entry<Integer, Map<String, String>>> structureMap = ConfigFileReader.readConfigFile(configFile);
+        final List<ResourceEntry> configEntries = readResourcesConfigFile(configFile);
 
-        assertTrue(structureMap.isPresent());
-        assertEquals(5, structureMap.get().getValue().size());
-        assertEquals(biggestStringInFile.length(), structureMap.get().getKey());
+        assertFalse(configEntries.isEmpty());
+        assertEquals(5, configEntries.size());
     }
 
     @Test
-    void readConfigFile_withNonExistingConfigFile_shouldThrowException() {
+    void readResourcesConfigFile_withNonExistingResourcesConfigFile_shouldThrowException() {
 
         final String configFile = "i_do_not_exist.config";
 
-        assertThrows(IllegalArgumentException.class, () -> ConfigFileReader.readConfigFile(configFile));
+        assertThrows(IllegalArgumentException.class, () -> readResourcesConfigFile(configFile));
     }
 
 }

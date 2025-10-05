@@ -47,7 +47,7 @@ set +a
 : "${ROOT_DIR:?Missing ROOT_DIR in $CONFIG_FILE}"
 
 ROOT_DIR="$ROOT_DIR/$APP_NAME"
-STRUCTURE_FILE="$MODEL/${MODEL}_structure.txt"
+STRUCTURE_FILE="$MODEL/${MODEL}.model"
 TEMPLATE_PATH="$MODEL/readme_templates"
 
 if [[ ! -d "$MODEL" ]]; then
