@@ -40,15 +40,13 @@ class IOUtilitiesTest extends InjectorResetForTest {
          * That can break the names of sources we test here.
          * Consider opening the jar and confirming that the source folder and file exist as a 1st troubleshooting step.
          */
-
         final MavenProject project                 = createWithTestBaseDir();
         final Path         basePath                = project.getBasedir().toPath();
         final URL          jarUrl                  = this.getClass().getResource("/" + TEST_JAR_NAME);
-        final String       sourceFolderInJar       = ".github/workflows/";
         final String       sourceFileInFolderInJar = "workflow.yml";
-        final Path         targetFolder            = basePath.resolve(sourceFolderInJar);
+        final Path         targetFolder            = basePath.resolve(SOURCE_FOLDER_IN_JAR);
 
-        copyResourceFolder(jarUrl, sourceFolderInJar, targetFolder);
+        copyResourceFolder(jarUrl, SOURCE_FOLDER_IN_JAR, targetFolder);
 
         assertTrue(exists(targetFolder));
         assertTrue(targetFolder.toFile().isDirectory());
@@ -64,12 +62,11 @@ class IOUtilitiesTest extends InjectorResetForTest {
          * That can break the names of sources we test here.
          * Consider opening the jar and confirming that the source folder and file exist as a 1st troubleshooting step.
          */
-        final MavenProject project           = createWithTestBaseDir();
-        final Path         basePath          = project.getBasedir().toPath();
-        final String       sourceFolderInJar = ".github/workflows/";
-        final Path         targetFolder      = basePath.resolve(sourceFolderInJar);
+        final MavenProject project      = createWithTestBaseDir();
+        final Path         basePath     = project.getBasedir().toPath();
+        final Path         targetFolder = basePath.resolve(SOURCE_FOLDER_IN_JAR);
 
-        final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceFolder(null, sourceFolderInJar, targetFolder));
+        final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceFolder(null, SOURCE_FOLDER_IN_JAR, targetFolder));
         assertInstanceOf(NullPointerException.class, runtimeException.getCause());
     }
 
@@ -80,13 +77,14 @@ class IOUtilitiesTest extends InjectorResetForTest {
          * That can break the names of sources we test here.
          * Consider opening the jar and confirming that the source folder and file exist as a 1st troubleshooting step.
          */
-        final MavenProject project           = createWithTestBaseDir();
-        final Path         basePath          = project.getBasedir().toPath();
-        final URL          jarUrl            = this.getClass().getResource("/" + TEST_JAR_NAME);
-        final String       sourceFolderInJar = ".gitlab/workflows/";
-        final Path         targetFolder      = basePath.resolve(sourceFolderInJar);
+        final MavenProject project  = createWithTestBaseDir();
+        final Path         basePath = project.getBasedir().toPath();
+        final URL          jarUrl   = this.getClass().getResource("/" + TEST_JAR_NAME);
 
-        final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceFolder(jarUrl, sourceFolderInJar, targetFolder));
+        final Path targetFolder = basePath.resolve(SOURCE_FOLDER_NOT_IN_JAR);
+
+        final RuntimeException runtimeException =
+                assertThrows(RuntimeException.class, () -> copyResourceFolder(jarUrl, SOURCE_FOLDER_NOT_IN_JAR, targetFolder));
         assertInstanceOf(NoSuchFileException.class, runtimeException.getCause());
     }
 
@@ -97,11 +95,10 @@ class IOUtilitiesTest extends InjectorResetForTest {
          * That can break the names of sources we test here.
          * Consider opening the jar and confirming that the source folder and file exist as a 1st troubleshooting step.
          */
-        final URL          jarUrl            = this.getClass().getResource("/" + TEST_JAR_NAME);
-        final String       sourceFolderInJar = ".github/workflows/";
-        final Path         targetFolder      = null;
+        final URL  jarUrl       = this.getClass().getResource("/" + TEST_JAR_NAME);
+        final Path targetFolder = null;
 
-        final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceFolder(jarUrl, sourceFolderInJar, targetFolder));
+        final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceFolder(jarUrl, SOURCE_FOLDER_IN_JAR, targetFolder));
         assertInstanceOf(NullPointerException.class, runtimeException.getCause());
     }
 

@@ -17,23 +17,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MavenConfigFileWriterTest extends InjectorResetForTest {
 
+    private static final String PROPERTY_0 = "test.property.0";
+    private static final String PROPERTY_1 = "test.property.1";
+    private static final String PROPERTY_2 = "test.property.2";
+
     @Test
     void writeAllProperties_modifyingExistingProperty_propertyIsModifiedInPlaceRestIsUntouched() {
 
         final MavenProject project                  = createWithTestBaseDir();
         final String       resourcesNotCompleted    = MVN_PREFIX + PROP_COMPLETED_RESOURCE + "=false";
         final String       architectureNotCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=false";
-        final String       property_0               = "test.property.0";
-        final String       property_1               = "test.property.1";
-        final String       property_2               = "test.property.2";
+
         setMavenProject(project);
 
-        writeMavenProperty(property_0, "00");
+        writeMavenProperty(PROPERTY_0, "00");
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
-        writeMavenProperty(property_1, "01");
+        writeMavenProperty(PROPERTY_1, "01");
         stampCurrentPluginVersion();
         writeMavenProperty(PROP_COMPLETED_RESOURCE, "true");
-        writeMavenProperty(property_2, "02");
+        writeMavenProperty(PROPERTY_2, "02");
 
         // rewrite an existing prop to test inplace modification
         writeMavenProperty(PROP_COMPLETED_ARCH, "false");
@@ -74,27 +76,25 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         final String       resourcesCompleted    = MVN_PREFIX + PROP_COMPLETED_RESOURCE + "=true";
         final String       architectureCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=true";
         final String       versionStamp          = MVN_PREFIX + PROP_CREATED_WITH_VERSION + "=" + project.getPlugin(PLUGIN_KEY).getVersion();
-        final String       property_0            = "test.property.0";
-        final String       property_1            = "test.property.1";
-        final String       property_2            = "test.property.2";
+
         setMavenProject(project);
 
-        writeMavenProperty(property_0, "00");
+        writeMavenProperty(PROPERTY_0, "00");
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
         writeMavenProperty(PROP_COMPLETED_RESOURCE, "true");
-        writeMavenProperty(property_1, "01");
+        writeMavenProperty(PROPERTY_1, "01");
         stampCurrentPluginVersion();
-        writeMavenProperty(property_2, "02");
+        writeMavenProperty(PROPERTY_2, "02");
 
         final List<String> strings = readAllLinesFromFile(project.getBasedir().toPath().resolve(".mvn", "maven.config"));
 
         assertEquals(6, strings.size());
-        assertEquals(MVN_PREFIX + property_0 + "=00", strings.get(0));
+        assertEquals(MVN_PREFIX + PROPERTY_0 + "=00", strings.get(0));
         assertEquals(architectureCompleted, strings.get(1));
         assertEquals(resourcesCompleted, strings.get(2));
-        assertEquals(MVN_PREFIX + property_1 + "=01", strings.get(3));
+        assertEquals(MVN_PREFIX + PROPERTY_1 + "=01", strings.get(3));
         assertEquals(versionStamp, strings.get(4));
-        assertEquals(MVN_PREFIX + property_2 + "=02", strings.get(5));
+        assertEquals(MVN_PREFIX + PROPERTY_2 + "=02", strings.get(5));
     }
 
 }

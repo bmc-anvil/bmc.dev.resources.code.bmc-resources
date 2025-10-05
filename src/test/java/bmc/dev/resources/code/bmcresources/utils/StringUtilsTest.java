@@ -14,7 +14,6 @@ class StringUtilsTest {
     void stringHasContent_returnsFalse(final String input) {
 
         assertFalse(StringUtils.isNullOrBlank.test(input));
-
     }
 
     @ParameterizedTest
@@ -23,7 +22,6 @@ class StringUtilsTest {
     void stringIsNullOrBlank_returnsFalse(final String input) {
 
         assertTrue(StringUtils.isNullOrBlank.test(input));
-
     }
 
 }

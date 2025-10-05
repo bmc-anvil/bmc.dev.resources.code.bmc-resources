@@ -53,7 +53,6 @@ class MavenConfigFileReaderTest extends InjectorResetForTest {
 
         assertTrue(mavenPropertyResult.isPresent());
         assertEquals(propertyValue, mavenPropertyResult.get());
-
     }
 
     @SneakyThrows

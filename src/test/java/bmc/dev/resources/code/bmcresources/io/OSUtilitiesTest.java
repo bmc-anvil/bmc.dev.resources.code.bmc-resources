@@ -42,15 +42,16 @@ import static org.mockito.Mockito.*;
  */
 class OSUtilitiesTest extends InjectorResetForTest {
 
+    private static final List<String> NOTHING_TO_DO_BASH_SCRIPT = of("#!/bin/bash");
+    private static final String       NOTHING_TO_DO_FILE_NAME   = "nothingToDoFileName.sh";
+
     @SneakyThrows
     @Test
     void makeFilesExecutable_withExistingFile_shouldUpdatePermissions() {
 
-        final String       nothingToDoFileName   = "nothingToDoFileName.sh";
-        final List<String> nothingToDoBashScript = of("#!/bin/bash");
-        final Path         executableFilePath    = createWithTestBaseDir().getBasedir().toPath().resolve(nothingToDoFileName);
+        final Path executableFilePath = createWithTestBaseDir().getBasedir().toPath().resolve(NOTHING_TO_DO_FILE_NAME);
 
-        write(executableFilePath, nothingToDoBashScript, UTF_8, CREATE, TRUNCATE_EXISTING);
+        write(executableFilePath, NOTHING_TO_DO_BASH_SCRIPT, UTF_8, CREATE, TRUNCATE_EXISTING);
         final Set<PosixFilePermission> originalFilePermissions = getPosixFilePermissions(executableFilePath);
         assertFalse(originalFilePermissions.contains(OWNER_EXECUTE));
         assertFalse(originalFilePermissions.contains(GROUP_EXECUTE));
@@ -61,22 +62,19 @@ class OSUtilitiesTest extends InjectorResetForTest {
         assertTrue(updatedFilePermissions.contains(OWNER_EXECUTE));
         assertTrue(updatedFilePermissions.contains(GROUP_EXECUTE));
         assertTrue(updatedFilePermissions.contains(OTHERS_EXECUTE));
-
     }
 
     @SneakyThrows
     @Test
     void makeFilesExecutable_withMockedNonPosixAndNotSettingPermissions_shouldNotChangeFiles() {
 
-        final String       nothingToDoFileName   = "nothingToDoFileName.sh";
-        final List<String> nothingToDoBashScript = of("#!/bin/bash");
-        final Path         executableFilePath    = createWithTestBaseDir().getBasedir().toPath().resolve(nothingToDoFileName);
-        final File         executableFile        = executableFilePath.toFile();
-        final File         spiedExecutableFile   = spy(executableFile);
+        final Path executableFilePath  = createWithTestBaseDir().getBasedir().toPath().resolve(NOTHING_TO_DO_FILE_NAME);
+        final File executableFile      = executableFilePath.toFile();
+        final File spiedExecutableFile = spy(executableFile);
 
         doReturn(false).when(spiedExecutableFile).setExecutable(anyBoolean(), anyBoolean());
 
-        write(executableFilePath, nothingToDoBashScript, UTF_8, CREATE, TRUNCATE_EXISTING);
+        write(executableFilePath, NOTHING_TO_DO_BASH_SCRIPT, UTF_8, CREATE, TRUNCATE_EXISTING);
         final Set<PosixFilePermission> originalFilePermissions = getPosixFilePermissions(executableFilePath);
         assertFalse(originalFilePermissions.contains(OWNER_EXECUTE));
         assertFalse(originalFilePermissions.contains(GROUP_EXECUTE));
@@ -101,10 +99,8 @@ class OSUtilitiesTest extends InjectorResetForTest {
     @Test
     void makeFilesExecutable_withMockedNonPosix_shouldAttemptToMakeFileExecutableFallback() {
 
-        final String       nothingToDoFileName   = "nothingToDoFileName.sh";
-        final List<String> nothingToDoBashScript = of("#!/bin/bash");
-        final Path         executableFilePath    = createWithTestBaseDir().getBasedir().toPath().resolve(nothingToDoFileName);
-        write(executableFilePath, nothingToDoBashScript, UTF_8, CREATE, TRUNCATE_EXISTING);
+        final Path executableFilePath = createWithTestBaseDir().getBasedir().toPath().resolve(NOTHING_TO_DO_FILE_NAME);
+        write(executableFilePath, NOTHING_TO_DO_BASH_SCRIPT, UTF_8, CREATE, TRUNCATE_EXISTING);
 
         final Set<PosixFilePermission> originalFilePermissions = getPosixFilePermissions(executableFilePath);
         assertFalse(originalFilePermissions.contains(OWNER_EXECUTE));
@@ -132,7 +128,6 @@ class OSUtilitiesTest extends InjectorResetForTest {
         final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> makeFileExecutable(noFileHere));
 
         assertInstanceOf(NoSuchFileException.class, runtimeException.getCause());
-
     }
 
 }
