@@ -1,5 +1,6 @@
 package bmc.dev.resources.code.bmcresources.generators.resources;
 
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -28,8 +29,9 @@ public class ResourcesUtils {
 
             if (source.endsWith("/")) {
                 log.debug(formatColor.apply(CYAN, "Directory: [{}]"), sourcePathAsResource);
+                final URL jarUrl = ResourcesUtils.class.getProtectionDomain().getCodeSource().getLocation();
 
-                copyResourceFolder(source, Path.of(target));
+                copyResourceFolder(jarUrl, source, Path.of(target));
             } else {
                 log.debug(formatColor.apply(CYAN, "File: [{}]"), sourcePathAsResource);
                 copyResourceSingle(projectBasePath, source, target);

@@ -1,6 +1,5 @@
 package bmc.dev.resources.code.bmcresources.io;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.FileSystem;
@@ -44,9 +43,7 @@ public class IOUtilities {
      *
      * @throws RuntimeException if any I/O error occurs during the copy process
      */
-    public static void copyResourceFolder(final String sourceFolderInJar, final Path targetFolder) {
-
-        final URL jarUrl = ResourcesUtils.class.getProtectionDomain().getCodeSource().getLocation();
+    public static void copyResourceFolder(final URL jarUrl, final String sourceFolderInJar, final Path targetFolder) {
 
         try (final FileSystem fs = newFileSystem(Path.of(jarUrl.toURI()), (ClassLoader) null)) {
 
@@ -107,8 +104,9 @@ public class IOUtilities {
 
         try {
             createDirectories(target);
-        } catch (final IOException ioe) {
-            log.error("could not create directory [{}]", target, ioe);
+        } catch (final Exception e) {
+            log.error("could not create directory [{}]", target, e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -117,15 +115,16 @@ public class IOUtilities {
      * If the file does not exist, an empty list is returned.
      * In case of an I/O error, a {@link RuntimeException} is thrown.
      *
-     * @param mavenConfigPath the path to the file to be read
+     * @param fileToRead the path to the file to be read
      *
      * @return a list of strings containing all lines from the file, or an empty list if the file does not exist
      */
-    public static List<String> readAllLinesFromFile(final Path mavenConfigPath) {
+    public static List<String> readAllLinesFromFile(final Path fileToRead) {
 
         try {
-            return exists(mavenConfigPath) ? readAllLines(mavenConfigPath, UTF_8) : new ArrayList<>();
-        } catch (final IOException e) {
+            return exists(fileToRead) ? readAllLines(fileToRead, UTF_8) : new ArrayList<>();
+        } catch (final Exception e) {
+            log.error("Error reading file [{}]", fileToRead, e);
             throw new RuntimeException(e);
         }
     }
@@ -134,16 +133,16 @@ public class IOUtilities {
      * Writes all the provided lines to the specified file.
      * The file is created or truncated if it already exists.
      *
-     * @param linesToWrite    the collection of lines to write to the file
-     * @param mavenConfigPath the path to the file where the lines will be written
+     * @param linesToWrite the collection of lines to write to the file
+     * @param targetPath   the path to the file where the lines will be written
      */
-    public static void writeAllLinesToFile(final Collection<String> linesToWrite, final Path mavenConfigPath) {
+    public static void writeAllLinesToFile(final Collection<String> linesToWrite, final Path targetPath) {
 
         try {
             log.debug(formatColor.apply(CYAN, "writing all lines [{}]"), linesToWrite);
-            write(mavenConfigPath, linesToWrite, UTF_8, CREATE, TRUNCATE_EXISTING);
+            write(targetPath, linesToWrite, UTF_8, CREATE, TRUNCATE_EXISTING);
         } catch (final Exception e) {
-            log.error("Error writing to [{}]", mavenConfigPath, e);
+            log.error("Error writing to [{}]", targetPath, e);
             throw new RuntimeException(e);
         }
     }
