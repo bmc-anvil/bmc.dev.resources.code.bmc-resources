@@ -1,7 +1,6 @@
 package bmc.dev.resources.code.bmcresources.utils;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,9 +17,8 @@ import bmc.dev.resources.code.bmcresources.config.ResourceEntry;
 
 import static bmc.dev.resources.code.bmcresources.Constants.COMMENT_PREFIX;
 import static bmc.dev.resources.code.bmcresources.Constants.STRUCTURE_SEPARATOR;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.getBufferedReaderFromResource;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.requireNonNull;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.*;
@@ -139,11 +137,9 @@ class BMCConfigFileUtilsTest {
     @Test
     void extractArchitectureModel_withValidData_returnsASortedList() {
 
-        final String configFile = "/clean_ddd_hexa_for_tests.config";
-        final BufferedReader configFileReader =
-                new BufferedReader(new InputStreamReader(requireNonNull(this.getClass().getResourceAsStream(configFile)), UTF_8));
-
-        final List<ArchitectureEntry> configEntries = extractArchitectureModel.apply(configFileReader);
+        final String                  configFile       = "clean_ddd_hexa_for_tests.config";
+        final BufferedReader          configFileReader = getBufferedReaderFromResource(configFile, this.getClass());
+        final List<ArchitectureEntry> configEntries    = extractArchitectureModel.apply(configFileReader);
 
         assertEquals(5, configEntries.size());
         assertInstanceOf(List.class, configEntries);
@@ -160,11 +156,9 @@ class BMCConfigFileUtilsTest {
     @Test
     void extractResources_withValidData_returnsASortedList() {
 
-        final String configFile = "/bmc_resources_upstream_for_tests.config";
-        final BufferedReader configFileReader =
-                new BufferedReader(new InputStreamReader(requireNonNull(this.getClass().getResourceAsStream(configFile)), UTF_8));
-
-        final List<ResourceEntry> configEntries = extractResources.apply(configFileReader);
+        final String              configFile       = "bmc_resources_upstream_for_tests.config";
+        final BufferedReader      configFileReader = getBufferedReaderFromResource(configFile, this.getClass());
+        final List<ResourceEntry> configEntries    = extractResources.apply(configFileReader);
 
         assertEquals(3, configEntries.size());
         assertInstanceOf(List.class, configEntries);

@@ -1,6 +1,8 @@
 package bmc.dev.resources.code.bmcresources.io;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
@@ -24,6 +26,7 @@ import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A utility class for common I/O operations such as copying resources, creating directories,
@@ -34,6 +37,29 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 @Slf4j
 @UtilityClass
 public class IOUtilities {
+
+    /**
+     * Copies a single resource from a specified sourceResourceName to a targetResourceName.
+     *
+     * @param baseTargetPath     The base path to start writing the resource to.
+     * @param sourceResourceName The source of the resource with its name. Can be nested in folders.
+     * @param targetResourceName The target resource with its name. Can be nested in folders. Can be different from the source
+     */
+    public static void copyResourceFile(final Path baseTargetPath, final String sourceResourceName, final String targetResourceName) {
+
+        try (final InputStream sourceStream = ResourcesUtils.class.getResourceAsStream("/" + sourceResourceName)) {
+
+            if (sourceStream == null) {
+                log.warn(formatBoldColor.apply(YELLOW, "Could not find [{}]"), sourceResourceName);
+            } else {
+                copy(sourceStream, baseTargetPath.resolve(targetResourceName), REPLACE_EXISTING);
+                log.debug("Resource [{}] created", targetResourceName);
+            }
+        } catch (final Exception e) {
+            log.error("Error copying resource: [{}] to [{}] ", sourceResourceName, targetResourceName, e);
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Copies the contents of a specified folder within a JAR file into a specified target folder relative to the project's base path.
@@ -59,7 +85,7 @@ public class IOUtilities {
                     final Path targetPathOnRealFs = projectBasePath.resolve(targetPath);
 
                     if (isDirectory(path)) {
-                        createDirectory(targetPathOnRealFs);
+                        createDirectoriesSafely(targetPathOnRealFs);
                     } else {
                         //createDirectory(targetPathOnRealFs.getParent());
                         copy(path, targetPathOnRealFs, REPLACE_EXISTING);
@@ -74,36 +100,13 @@ public class IOUtilities {
     }
 
     /**
-     * Copies a single resource from a specified sourceResourceName to a targetResourceName.
-     *
-     * @param baseTargetPath     The base path to start writing the resource to.
-     * @param sourceResourceName The source of the resource with its name. Can be nested in folders.
-     * @param targetResourceName The target resource with its name. Can be nested in folders. Can be different from the source
-     */
-    public static void copyResourceSingle(final Path baseTargetPath, final String sourceResourceName, final String targetResourceName) {
-
-        try (final InputStream sourceStream = ResourcesUtils.class.getResourceAsStream("/" + sourceResourceName)) {
-
-            if (sourceStream == null) {
-                log.warn(formatBoldColor.apply(YELLOW, "Could not find [{}]"), sourceResourceName);
-            } else {
-                copy(sourceStream, baseTargetPath.resolve(targetResourceName), REPLACE_EXISTING);
-                log.debug("Resource [{}] created", targetResourceName);
-            }
-        } catch (final Exception e) {
-            log.error("Error copying resource: [{}] to [{}] ", sourceResourceName, targetResourceName, e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Creates a directory at the specified target path.
      * <p>
      * If intermediate directories do not exist, they will also be created.
      *
      * @param target the {@link Path} of the directory to be created
      */
-    public static void createDirectory(final Path target) {
+    public static void createDirectoriesSafely(final Path target) {
 
         try {
             createDirectories(target);
@@ -111,6 +114,22 @@ public class IOUtilities {
             log.error("could not create directory [{}]", target, e);
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Creates and returns a {@link BufferedReader} for reading from a resource file in the classpath.
+     * The resource file is located relative to the class of the specified {@code fromClass}.
+     *
+     * @param configFile the name of the resource file to be read
+     * @param fromClass  the {@link Class} used to determine the base path for locating the resource
+     *
+     * @return a {@link BufferedReader} for reading the contents of the specified resource file
+     *
+     * @throws NullPointerException if the resource file cannot be found in the specified location
+     */
+    public static BufferedReader getBufferedReaderFromResource(final String configFile, final Class<?> fromClass) {
+
+        return new BufferedReader(new InputStreamReader(requireNonNull(fromClass.getResourceAsStream("/" + configFile)), UTF_8));
     }
 
     /**

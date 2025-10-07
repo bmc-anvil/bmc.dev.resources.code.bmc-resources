@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="bmcresources in bmc-resources" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+        <module name="bmc-resources"/>
+        <option name="MAIN_CLASS_NAME" value=""/>
+        <option name="METHOD_NAME" value=""/>
+        <option name="TEST_OBJECT" value="directory"/>
+        <dir value="$PROJECT_DIR$/dev/resources/code/bmc-resources/src/test/java/bmc/dev/resources/code/bmcresources"/>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>

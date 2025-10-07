@@ -1,6 +1,7 @@
 package bmc.dev.resources.code.bmcresources.generators.resources;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
@@ -13,12 +14,13 @@ import bmc.dev.resources.code.bmcresources.io.OSUtilities;
 import bmc.dev.resources.code.support.InjectorResetForTest;
 
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.getJarUrl;
-import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourcesMap;
-import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.readResourcesConfigFile;
+import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourceEntries;
+import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.extractConfigFileEntries;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFile;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFolder;
-import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceSingle;
 import static bmc.dev.resources.code.bmcresources.io.OSUtilities.makeFileExecutable;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
 import static bmc.dev.resources.code.support.ConstantsForTest.TEST_JAR_NAME;
 import static bmc.dev.resources.code.support.ConstantsForTest.TEST_UPSTREAM_RESOURCES_CONFIG_FILE;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
@@ -32,10 +34,10 @@ class ResourcesUtilsTest extends InjectorResetForTest {
     private final URL testJarSupplier = this.getClass().getResource("/" + TEST_JAR_NAME);
 
     @Test
-    void processResourcesMap_withAssortedEntries_shouldCallEveryMethodAccordingly() {
+    void processResourceEntries_withAssortedEntries_shouldCallEveryMethodAccordingly() {
 
         final MavenProject        mavenProject  = createWithTestBaseDir();
-        final List<ResourceEntry> userResources = readResourcesConfigFile(TEST_UPSTREAM_RESOURCES_CONFIG_FILE);
+        final List<ResourceEntry> userResources = extractConfigFileEntries(TEST_UPSTREAM_RESOURCES_CONFIG_FILE, extractResources).orElseGet(ArrayList::new);
         setMavenProject(mavenProject);
 
         try (final MockedStatic<OSUtilities> mockedOSUtils = mockStatic(OSUtilities.class);
@@ -43,12 +45,12 @@ class ResourcesUtilsTest extends InjectorResetForTest {
              final MockedStatic<ResourcesUtils> mockedResourceUtils = mockStatic(ResourcesUtils.class)) {
 
             mockedResourceUtils.when(ResourcesUtils::getJarUrl).thenReturn(testJarSupplier);
-            mockedResourceUtils.when(() -> processResourcesMap(any())).thenCallRealMethod();
+            mockedResourceUtils.when(() -> processResourceEntries(any())).thenCallRealMethod();
 
-            processResourcesMap(userResources);
+            processResourceEntries(userResources);
 
             mockedIOUtils.verify(() -> copyResourceFolder(any(), any(), any()), times(1));
-            mockedIOUtils.verify(() -> copyResourceSingle(any(), any(), any()), times(2));
+            mockedIOUtils.verify(() -> copyResourceFile(any(), any(), any()), times(2));
             mockedOSUtils.verify(() -> makeFileExecutable(any()), times(1));
         }
     }

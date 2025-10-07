@@ -17,7 +17,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.*;
-import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectory;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
 import static bmc.dev.resources.code.support.ConstantsForTest.*;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
@@ -33,6 +32,20 @@ import static org.mockito.Mockito.mockStatic;
 
 @Slf4j
 class IOUtilitiesTest extends InjectorResetForTest {
+
+    @Test
+    void copyResourceFile_withNoExistingSourceFile_noFileShouldBeCopied() {
+
+        final MavenProject project        = createWithTestBaseDir();
+        final Path         basePath       = project.getBasedir().toPath();
+        final String       fileToCopy     = "i_do_not_exist.xml";
+        final String       targetFileName = "test-pom-copy.xml";
+        final Path         copiedFile     = basePath.resolve(targetFileName);
+
+        copyResourceFile(basePath, fileToCopy, targetFileName);
+
+        assertFalse(exists(copiedFile));
+    }
 
     @Test
     void copyResourceFolder_withExistingJar_shouldCopy() {
@@ -120,7 +133,7 @@ class IOUtilitiesTest extends InjectorResetForTest {
         try (final MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
             mockedFiles.when(() -> Files.copy(any(InputStream.class), any(Path.class), any())).thenThrow(IOException.class);
 
-            final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceSingle(basePath, fileToCopy, targetFileName));
+            final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceFile(basePath, fileToCopy, targetFileName));
             assertInstanceOf(IOException.class, runtimeException.getCause());
         }
 
@@ -136,33 +149,19 @@ class IOUtilitiesTest extends InjectorResetForTest {
         final String       targetFileName = "test-pom-copy.xml";
         final Path         copiedFile     = basePath.resolve(targetFileName);
 
-        copyResourceSingle(basePath, fileToCopy, targetFileName);
+        copyResourceFile(basePath, fileToCopy, targetFileName);
 
         assertTrue(exists(copiedFile));
     }
 
     @Test
-    void copyResourceSingle_withNoExistingSourceFile_noFileShouldBeCopied() {
-
-        final MavenProject project        = createWithTestBaseDir();
-        final Path         basePath       = project.getBasedir().toPath();
-        final String       fileToCopy     = "i_do_not_exist.xml";
-        final String       targetFileName = "test-pom-copy.xml";
-        final Path         copiedFile     = basePath.resolve(targetFileName);
-
-        copyResourceSingle(basePath, fileToCopy, targetFileName);
-
-        assertFalse(exists(copiedFile));
-    }
-
-    @Test
-    void createDirectory_shouldCreateDirectory() {
+    void createDirectory_shouldCreateDirectoriesSafely() {
 
         final MavenProject project    = createWithTestBaseDir();
         final Path         basePath   = project.getBasedir().toPath();
         final Path         targetPath = basePath.resolve("target", "to", "create");
 
-        createDirectory(targetPath);
+        createDirectoriesSafely(targetPath);
 
         assertTrue(exists(targetPath));
         assertTrue(isDirectory(targetPath));
@@ -178,7 +177,7 @@ class IOUtilitiesTest extends InjectorResetForTest {
         try (final MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
             mockedFiles.when(() -> Files.createDirectories(any(Path.class))).thenThrow(IOException.class);
 
-            final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> createDirectory(targetPath));
+            final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> createDirectoriesSafely(targetPath));
             assertInstanceOf(IOException.class, runtimeException.getCause());
         }
 

@@ -9,8 +9,8 @@ import bmc.dev.resources.code.bmcresources.config.ResourceEntry;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFile;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFolder;
-import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceSingle;
 import static bmc.dev.resources.code.bmcresources.io.OSUtilities.makeFileExecutable;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
@@ -50,13 +50,13 @@ public class ResourcesUtils {
      * <br>If a given file is marked as executable, it will make the copied target file executable.
      * <p>
      *
-     * @param configEntries A list of configuration entries to process
+     * @param resourceEntries A list of configuration entries to process
      */
-    public static void processResourcesMap(final List<ResourceEntry> configEntries) {
+    public static void processResourceEntries(final List<ResourceEntry> resourceEntries) {
 
         final Path projectBasePath = getMavenProject().getBasedir().toPath();
 
-        configEntries.forEach(configEntry -> {
+        resourceEntries.forEach(configEntry -> {
 
             final String source               = configEntry.source();
             final String target               = configEntry.target();
@@ -69,7 +69,7 @@ public class ResourcesUtils {
                 copyResourceFolder(getJarUrl(), source, Path.of(target));
             } else {
                 log.debug(formatColor.apply(CYAN, "File: [{}]"), sourcePathAsResource);
-                copyResourceSingle(projectBasePath, source, target);
+                copyResourceFile(projectBasePath, source, target);
             }
 
             configEntry.permission()

@@ -16,7 +16,6 @@ public class StringUtils {
      * A string is considered blank if it is empty or contains only whitespace characters.
      *
      * @see String#isBlank()
-     *
      */
     public static final Predicate<String> isNullOrBlank = stringToEvaluate -> stringToEvaluate == null || stringToEvaluate.isBlank();
 

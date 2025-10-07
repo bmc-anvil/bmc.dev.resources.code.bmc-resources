@@ -2,7 +2,9 @@ package bmc.dev.resources.code.bmcresources.generators.resources;
 
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.apache.maven.project.MavenProject;
@@ -18,13 +20,15 @@ import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesProcessor.processResources;
-import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourcesMap;
-import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.readResourcesConfigFile;
+import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourceEntries;
+import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.extractConfigFileEntries;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
 import static bmc.dev.resources.code.support.ConstantsForTest.*;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static java.lang.System.getProperties;
 import static java.nio.file.Files.exists;
+import static java.util.Optional.ofNullable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 
@@ -43,16 +47,16 @@ class ResourcesProcessorTest extends InjectorResetForTest {
         final ResourcesConfig resourcesConfig = new ResourcesConfig();
         getProperties().setProperty(PROP_COMPLETED_RESOURCE, "false");
 
-        final List<ResourceEntry> upstreamResources = readResourcesConfigFile(TEST_UPSTREAM_RESOURCES_CONFIG_FILE);
-        final List<ResourceEntry> userResources     = readResourcesConfigFile(TEST_USER_RESOURCES_CONFIG_FILE);
+        final Optional<List<ResourceEntry>> upstreamResources = extractConfigFileEntries(TEST_UPSTREAM_RESOURCES_CONFIG_FILE, extractResources);
+        final Optional<List<ResourceEntry>> userResources     = extractConfigFileEntries(TEST_USER_RESOURCES_CONFIG_FILE, extractResources);
 
-        checkResourcesExistence(upstreamResources, testBasePath, Assertions::assertFalse);
-        checkResourcesExistence(userResources, testBasePath, Assertions::assertFalse);
+        checkResourcesExistence(upstreamResources.orElseThrow(), testBasePath, Assertions::assertFalse);
+        checkResourcesExistence(userResources.orElseGet(ArrayList::new), testBasePath, Assertions::assertFalse);
 
-        mockClassesAndProcessResources(upstreamResources, userResources, testJarSupplier, resourcesConfig);
+        mockClassesAndProcessResources(upstreamResources.orElseGet(ArrayList::new), userResources.orElseGet(ArrayList::new), testJarSupplier, resourcesConfig);
 
-        checkResourcesExistence(upstreamResources, testBasePath, Assertions::assertTrue);
-        checkResourcesExistence(userResources, testBasePath, Assertions::assertTrue);
+        checkResourcesExistence(upstreamResources.orElseGet(ArrayList::new), testBasePath, Assertions::assertTrue);
+        checkResourcesExistence(userResources.orElseGet(ArrayList::new), testBasePath, Assertions::assertTrue);
     }
 
     @Test
@@ -66,13 +70,13 @@ class ResourcesProcessorTest extends InjectorResetForTest {
         resourcesConfig.setOverwriteUserResources(false);
         getProperties().setProperty(PROP_COMPLETED_RESOURCE, "true");
 
-        final List<ResourceEntry> upstreamResources = readResourcesConfigFile(TEST_UPSTREAM_RESOURCES_CONFIG_FILE);
-        final List<ResourceEntry> userResources     = readResourcesConfigFile(TEST_USER_RESOURCES_CONFIG_FILE);
+        final Optional<List<ResourceEntry>> upstreamResources = extractConfigFileEntries(TEST_UPSTREAM_RESOURCES_CONFIG_FILE, extractResources);
+        final Optional<List<ResourceEntry>> userResources     = extractConfigFileEntries(TEST_USER_RESOURCES_CONFIG_FILE, extractResources);
 
-        mockClassesAndProcessResources(upstreamResources, userResources, testJarSupplier, resourcesConfig);
+        mockClassesAndProcessResources(upstreamResources.orElseGet(ArrayList::new), userResources.orElseGet(ArrayList::new), testJarSupplier, resourcesConfig);
 
-        checkResourcesExistence(upstreamResources, testBasePath, Assertions::assertTrue);
-        checkResourcesExistence(userResources, testBasePath, Assertions::assertFalse);
+        checkResourcesExistence(upstreamResources.orElseGet(ArrayList::new), testBasePath, Assertions::assertTrue);
+        checkResourcesExistence(userResources.orElseGet(ArrayList::new), testBasePath, Assertions::assertFalse);
     }
 
     @Test
@@ -86,13 +90,13 @@ class ResourcesProcessorTest extends InjectorResetForTest {
         resourcesConfig.setOverwriteUserResources(true);
         getProperties().setProperty(PROP_COMPLETED_RESOURCE, "true");
 
-        final List<ResourceEntry> upstreamResources = readResourcesConfigFile(TEST_UPSTREAM_RESOURCES_CONFIG_FILE);
-        final List<ResourceEntry> userResources     = readResourcesConfigFile(TEST_USER_RESOURCES_CONFIG_FILE);
+        final Optional<List<ResourceEntry>> upstreamResources = extractConfigFileEntries(TEST_UPSTREAM_RESOURCES_CONFIG_FILE, extractResources);
+        final Optional<List<ResourceEntry>> userResources     = extractConfigFileEntries(TEST_USER_RESOURCES_CONFIG_FILE, extractResources);
 
-        mockClassesAndProcessResources(upstreamResources, userResources, testJarSupplier, resourcesConfig);
+        mockClassesAndProcessResources(upstreamResources.orElseGet(ArrayList::new), userResources.orElseGet(ArrayList::new), testJarSupplier, resourcesConfig);
 
-        checkResourcesExistence(upstreamResources, testBasePath, Assertions::assertTrue);
-        checkResourcesExistence(userResources, testBasePath, Assertions::assertTrue);
+        checkResourcesExistence(upstreamResources.orElseGet(ArrayList::new), testBasePath, Assertions::assertTrue);
+        checkResourcesExistence(userResources.orElseGet(ArrayList::new), testBasePath, Assertions::assertTrue);
     }
 
     private static void checkResourcesExistence(final List<ResourceEntry> resourceEntries, final Path mavenProject, final Consumer<Boolean> assertion) {
@@ -108,9 +112,9 @@ class ResourcesProcessorTest extends InjectorResetForTest {
 
         try (final MockedStatic<ConfigFileReader> mockedConfigReader = mockStatic(ConfigFileReader.class);
              final MockedStatic<ResourcesUtils> mockedResourceUtils = mockStatic(ResourcesUtils.class)) {
-            mockedConfigReader.when(() -> readResourcesConfigFile(FILE_RESOURCES_UPSTREAM)).thenReturn(upstreamResources);
-            mockedConfigReader.when(() -> readResourcesConfigFile(FILE_RESOURCES_USER)).thenReturn(userResources);
-            mockedResourceUtils.when(() -> processResourcesMap(any())).thenCallRealMethod();
+            mockedConfigReader.when(() -> extractConfigFileEntries(FILE_RESOURCES_UPSTREAM, extractResources)).thenReturn(ofNullable(upstreamResources));
+            mockedConfigReader.when(() -> extractConfigFileEntries(FILE_RESOURCES_USER, extractResources)).thenReturn(ofNullable(userResources));
+            mockedResourceUtils.when(() -> processResourceEntries(any())).thenCallRealMethod();
             mockedResourceUtils.when(ResourcesUtils::getJarUrl).thenReturn(testJarSupplier);
 
             processResources(resourcesConfig);

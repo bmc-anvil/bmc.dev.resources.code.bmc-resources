@@ -15,17 +15,29 @@ import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatCol
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.CYAN;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.RED;
 
+/**
+ * Class with writing utilities for maven.config files.
+ */
 @Slf4j
 @UtilityClass
 public class MavenConfigFileWriter {
 
+    /**
+     * Writes a -D property to .mvn/maven.config file.
+     * <p>
+     * If the {@code propertyKey=my.property.key} and {@code propertyValue=myValue} the line written on the file will
+     * be: {@code -Dmy.property.key=myValue}
+     *
+     * @param propertyKey   property key
+     * @param propertyValue property value
+     */
     public static void writeMavenProperty(final String propertyKey, final String propertyValue) {
 
         final Path   mavenConfigPath           = getMavenProject().getBasedir().toPath().resolve(".mvn", "maven.config");
         final String propertyWithPrefix        = MVN_PREFIX + propertyKey;
         final String updatedPropertyWithPrefix = propertyWithPrefix + "=" + propertyValue;
 
-        createDirectory(mavenConfigPath.getParent());
+        createDirectoriesSafely(mavenConfigPath.getParent());
 
         final List<String> lines = readAllLinesFromFile(mavenConfigPath);
 

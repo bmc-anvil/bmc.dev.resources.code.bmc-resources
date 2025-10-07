@@ -1,18 +1,16 @@
 package bmc.dev.resources.code.bmcresources.io;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
-import bmc.dev.resources.code.bmcresources.config.ArchitectureEntry;
-import bmc.dev.resources.code.bmcresources.config.ResourceEntry;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractArchitectureModel;
-import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.requireNonNull;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.getBufferedReaderFromResource;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 /**
  * Utility class for reading and processing configuration files.
@@ -22,63 +20,32 @@ import static java.util.Objects.requireNonNull;
 public class ConfigFileReader {
 
     /**
-     * Reads an architecture model config file from the classpath, extracts its content into a List of {@link ArchitectureEntry}.
-     * <p>
-     * If the configuration file cannot be read, an exception is thrown.
+     * Reads and processes any type of configuration files from the classpath via a given extractor.
      *
-     * @param configFile the name of the configuration file located in the classpath
+     * @param configFile       the name of the configuration file located in the classpath
+     * @param contentExtractor the function to extract entries from the BufferedReader
+     * @param <T>              the type of entries to be returned
      *
-     * @return a List of {@link ResourceEntry} that can be empty is nothing could be extracted or the file was empty.
-     *
-     * @throws IllegalArgumentException if the specified configuration file cannot be found or read
-     */
-    public static List<ArchitectureEntry> readArchitectureModelFile(final String configFile) {
-
-        try (final BufferedReader configFileReader = new BufferedReader(
-                new InputStreamReader(requireNonNull(ConfigFileReader.class.getResourceAsStream("/" + configFile)), UTF_8))) {
-
-            final List<ArchitectureEntry> configEntries = extractArchitectureModel.apply(configFileReader);
-
-            log.info("[{}] folders to process according to [{}]", configEntries.size(), configFile);
-
-            if (configEntries.isEmpty()) {
-                log.warn("Reduction computed configEntries size to 0, nothing will be processed.");
-            }
-
-            return configEntries;
-        } catch (final Exception e) {
-            log.error("Resource not found on classpath: [{}]", configFile, e);
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    /**
-     * Reads a resource's configuration file from the classpath, extracts its content into a List of {@link ResourceEntry}.
-     * <p>
-     * If the configuration file cannot be read, an exception is thrown.
-     *
-     * @param configFile the name of the configuration file located in the classpath
-     *
-     * @return a List of {@link ResourceEntry} that can be empty is nothing could be extracted or the file was empty.
+     * @return a List of entries that can be empty if nothing could be extracted or the file was empty
      *
      * @throws IllegalArgumentException if the specified configuration file cannot be found or read
      */
-    public static List<ResourceEntry> readResourcesConfigFile(final String configFile) {
+    public static <T> Optional<List<T>> extractConfigFileEntries(final String configFile, final Function<BufferedReader, List<T>> contentExtractor) {
 
-        try (final BufferedReader configFileReader = new BufferedReader(
-                new InputStreamReader(requireNonNull(ConfigFileReader.class.getResourceAsStream("/" + configFile)), UTF_8))) {
+        try (final BufferedReader configFileReader = getBufferedReaderFromResource(configFile, ConfigFileReader.class)) {
 
-            final List<ResourceEntry> configEntries = extractResources.apply(configFileReader);
+            final List<T> configEntries = contentExtractor.apply(configFileReader);
 
-            log.info("[{}] resources to process according to [{}]", configEntries.size(), configFile);
+            log.info("[{}] {} to process", configEntries.size(), configFile);
 
             if (configEntries.isEmpty()) {
                 log.warn("Reduction computed configEntries size to 0, nothing will be processed.");
+                return empty();
             }
 
-            return configEntries;
+            return of(configEntries);
         } catch (final Exception e) {
-            log.error("Resource not found on classpath: [{}]", configFile, e);
+            log.error("Error processing config file: [{}]", configFile, e);
             throw new IllegalArgumentException(e);
         }
     }

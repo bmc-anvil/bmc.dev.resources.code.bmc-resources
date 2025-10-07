@@ -12,7 +12,7 @@ import org.junit.jupiter.api.io.TempDir;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceSingle;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFile;
 import static java.nio.file.Files.createDirectory;
 import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
@@ -52,7 +52,7 @@ public class DummyProjectForTest {
         final Path   tempDirPath     = createDirectory(basePath.resolve("tmp-" + randomUUID()));
         final String target          = tempDirPath.resolve(testPomFile).toString();
 
-        copyResourceSingle(basePath, testPomFile, target);
+        copyResourceFile(basePath, testPomFile, target);
 
         final File temp = basePath.resolve(target).toFile();
         project.setFile(temp);

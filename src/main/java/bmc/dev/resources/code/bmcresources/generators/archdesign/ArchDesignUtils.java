@@ -1,33 +1,36 @@
 package bmc.dev.resources.code.bmcresources.generators.archdesign;
 
 import java.nio.file.Path;
-import java.util.function.BiConsumer;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.maven.project.MavenProject;
 
 import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
+import bmc.dev.resources.code.bmcresources.config.ArchitectureEntry;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
-import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceSingle;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFile;
+import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectoriesSafely;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.getMavenProject;
-import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.calculateLeftAlignedPadding;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
 import static bmc.dev.resources.code.bmcresources.utils.StringUtils.isNullOrBlank;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.BLUE;
+import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.CYAN;
 import static java.util.Optional.ofNullable;
 
 @Slf4j
 @UtilityClass
 public class ArchDesignUtils {
 
-    public static Function<String, String>           getArchStructure          = model -> FOLDER_ARCH_MODELS + "/" + model + "/" + model + CONFIG_EXT;
-    public static BiFunction<String, String, String> getMainReadme             = (readme, model) -> ofNullable(readme).orElse(model + ".md");
-    public static Function<String, String>           getReadmesSourceDirectory = model -> FOLDER_ARCH_MODELS + "/" + model + "/" + FOLDER_TEMPLATES + "/";
+    public static Function<String, String>           getArchStructureFile     = model -> FOLDER_ARCH_MODELS + "/" + model + "/" + model + CONFIG_EXT;
+    public static BiFunction<String, String, String> getMainReadmeFile        = (readme, model) -> ofNullable(readme).orElse(model + ".md");
+    public static Function<String, String>           getReadmesSourceForModel = model -> FOLDER_ARCH_MODELS + "/" + model + "/" + FOLDER_TEMPLATES + "/";
 
     public static Path buildBaseTargetPathForArch() {
 
@@ -56,22 +59,52 @@ public class ArchDesignUtils {
         log.info("");
     }
 
-    public static BiConsumer<String, String> resolveLogOp(final boolean skip, final Integer maxFolderNameLength) {
+    public static void processArchitectureAndReadme(final ArchitectureConfig config, final List<ArchitectureEntry> architectureEntries,
+            final String padding) {
 
-        final String padding = calculateLeftAlignedPadding.apply(maxFolderNameLength);
+        final Path   baseTargetPathForArch = buildBaseTargetPathForArch();
+        final String mainDefaultReadme     = getMainReadmeFile.apply(config.getMainReadme(), config.getModel());
 
-        return skip ? (folder, _) -> log.info("Created folder [{}]", padding.formatted(folder))
-                    : (folder, readme) -> log.info("Created folder [{}] with readme [{}]", padding.formatted(folder), readme);
+        architectureEntries.forEach(configEntry -> {
+            final String           folder          = configEntry.folder();
+            final Optional<String> readme          = configEntry.readme();
+            final Path             targetDirectory = baseTargetPathForArch.resolve(folder);
+
+            createDirectoriesSafely(targetDirectory);
+            readme.ifPresent(readmeFile -> processReadme(config, folder, readmeFile));
+
+            log.info("Created folder [{}] with readme [{}]", padding.formatted(folder), readme.orElse("none configured"));
+        });
+
+        processReadme(config, "", mainDefaultReadme);
     }
 
-    public static BiConsumer<String, String> resolveReadmeOp(final ArchitectureConfig config, final Path baseTargetPathForArch) {
+    public static void processArchitectureOnly(final List<ArchitectureEntry> architectureEntries, final String padding) {
 
-        final String readmesSource = getReadmesSourceDirectory.apply(config.getModel());
+        final Path baseTargetPathForArch = buildBaseTargetPathForArch();
 
-        return config.isSkipReadme() ? (_, _) -> {/* no-op */}
-                                     : (targetFolder, readmeFile) ->
-                       copyResourceSingle(baseTargetPathForArch, readmesSource + readmeFile,
-                                          isNullOrBlank.test(targetFolder) ? readmeFile : targetFolder + "/" + readmeFile);
+        architectureEntries.forEach(configEntry -> {
+            final String folder          = configEntry.folder();
+            final Path   targetDirectory = baseTargetPathForArch.resolve(folder);
+
+            createDirectoriesSafely(targetDirectory);
+
+            log.info("Created folder [{}]", padding.formatted(folder));
+        });
+    }
+
+    public static void processReadme(final ArchitectureConfig config, final String targetFolder, final String readmeFile) {
+
+        if (isNullOrBlank.test(readmeFile)) {
+            log.debug(formatColor.apply(CYAN, "Readme [{}] is null or blank. Nothing to process"), readmeFile);
+            return;
+        }
+
+        final Path   baseTargetPathForArch = buildBaseTargetPathForArch();
+        final String sourceResourceName    = getReadmesSourceForModel.apply(config.getModel()) + readmeFile;
+        final String targetResourceName    = isNullOrBlank.test(targetFolder) ? readmeFile : targetFolder + "/" + readmeFile;
+
+        copyResourceFile(baseTargetPathForArch, sourceResourceName, targetResourceName);
     }
 
 }
