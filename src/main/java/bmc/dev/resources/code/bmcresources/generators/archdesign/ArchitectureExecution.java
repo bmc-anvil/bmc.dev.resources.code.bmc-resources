@@ -25,7 +25,7 @@ public class ArchitectureExecution {
      * <p>
      * This method performs either the architecture structure generation or skips the operation, depending on the configuration settings.
      *
-     * @param architecture the {@link ArchitectureConfig} object defining the architecture structure generation behaviour.
+     * @param architecture the {@link ArchitectureConfig} object defining the architecture structure generation behavior.
      */
     public static void createArchitecture(final ArchitectureConfig architecture) {
 

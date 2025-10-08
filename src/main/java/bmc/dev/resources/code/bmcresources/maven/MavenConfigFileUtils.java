@@ -10,9 +10,28 @@ import static java.util.Optional.ofNullable;
 import static java.util.OptionalInt.empty;
 import static java.util.stream.IntStream.range;
 
+/**
+ * Class for handling Maven configuration files.
+ */
 @UtilityClass
 public class MavenConfigFileUtils {
 
+    /**
+     * A {@link BiFunction} that determines the first occurrence of a given property, returning its index on the list.
+     * <br>This function is useful when working with Maven configuration files to locate specific properties
+     * in a list of configuration parameters.
+     * <p>
+     * If the property is found in the list, the {@code OptionalInt} will contain the index of the first matching string;
+     * otherwise, an empty {@code OptionalInt} is returned.
+     * <p>
+     * Input:
+     * - A list of strings to search within.
+     * - A property to search for within the strings of the list.
+     * <p>
+     * Output:
+     * - A non-empty {@code OptionalInt} containing the zero-based index of the first matching string
+     * if the property is found, or an empty {@code OptionalInt} otherwise.
+     */
     public static BiFunction<List<String>, String, OptionalInt> findPropertyIndex = (list, property) ->
             ofNullable(list)
                     .map(strings ->

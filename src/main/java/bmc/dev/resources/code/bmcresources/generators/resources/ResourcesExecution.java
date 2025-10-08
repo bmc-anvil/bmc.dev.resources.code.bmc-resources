@@ -22,7 +22,7 @@ public class ResourcesExecution {
      * <p>
      * This method performs either resource generation or skips the operation, depending on the configuration settings.
      *
-     * @param resources the {@link ResourcesConfig} object defining the resource generation behaviour.
+     * @param resources the {@link ResourcesConfig} object defining the resource generation behavior.
      */
     public static void createResources(final ResourcesConfig resources) {
 

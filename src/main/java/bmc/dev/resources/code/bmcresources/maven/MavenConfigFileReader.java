@@ -15,10 +15,25 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readAllLines;
 
+/**
+ * Class with utilities to read maven.config files.
+ */
 @Slf4j
 @UtilityClass
 public class MavenConfigFileReader {
 
+    /**
+     * Retrieves the value of a specified property from the Maven configuration file (.mvn/maven.config).
+     * <p>
+     * This method searches the configuration file for a line containing the specified property, extracts its value (the portion of the line after the '='
+     * character), and returns an {@link Optional} containing the value.
+     * <p>
+     * If the property is not found, an empty {@link Optional} is returned.
+     *
+     * @param propertyToRead the name of the property whose value should be retrieved
+     *
+     * @return an {@code Optional<String>} containing the value of the specified property or an {@link Optional#empty()} if the property is not found.
+     */
     public static Optional<String> getMavenPropertyValue(final String propertyToRead) {
 
         final Path mavenConfigPath = getMavenProject().getBasedir().toPath().resolve(".mvn", "maven.config");

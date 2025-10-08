@@ -24,6 +24,9 @@ import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.BLUE;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.CYAN;
 import static java.util.Optional.ofNullable;
 
+/**
+ * Utility class for handling architecture design operations.
+ */
 @Slf4j
 @UtilityClass
 public class ArchDesignUtils {
@@ -32,6 +35,21 @@ public class ArchDesignUtils {
     public static BiFunction<String, String, String> getMainReadmeFile        = (readme, model) -> ofNullable(readme).orElse(model + ".md");
     public static Function<String, String>           getReadmesSourceForModel = model -> FOLDER_ARCH_MODELS + "/" + model + "/" + FOLDER_TEMPLATES + "/";
 
+    /**
+     * Build the base target path for architecture-related directories based on the Maven project configuration.
+     * <p>
+     * The path is derived from the project's source directory, group ID (transformed into a directory structure),
+     * and artifact ID (with dashes removed).
+     * <p>
+     * examples:
+     * <br>artifactId: my-project -> myproject
+     * <br>groupId: com.my.group -> com/my/group
+     * <br>sourceDirectory: some/dir/project/dir/src/main/java
+     * <p>
+     * Resulting path: some/dir/project/dir/src/main/java/com/my/group/myproject
+     *
+     * @return A {@link Path} representing the base target directory path for the architecture.
+     */
     public static Path buildBaseTargetPathForArch() {
 
         final MavenProject mavenProject = getMavenProject();
@@ -43,6 +61,11 @@ public class ArchDesignUtils {
         return Path.of(sourceDirectory, groupId, artifactId);
     }
 
+    /**
+     * Logs detailed information about the architecture configuration.
+     *
+     * @param config the {@link ArchitectureConfig} object containing parameters for the architecture structure generation:
+     */
     public static void logArchitectureConfiguration(final ArchitectureConfig config) {
 
         final MavenProject mavenProject = getMavenProject();
@@ -59,8 +82,18 @@ public class ArchDesignUtils {
         log.info("");
     }
 
-    public static void processArchitectureAndReadme(final ArchitectureConfig config, final List<ArchitectureEntry> architectureEntries,
-            final String padding) {
+    /**
+     * Processes the creation of folder structures and accompanying README files for the specified
+     * architecture model based on the provided configuration.
+     * <p>
+     * This method combines both folder and README creation in a single pass.
+     *
+     * @param config              the {@link ArchitectureConfig} object specifying parameters for architecture structure generation.
+     * @param architectureEntries the list of {@link ArchitectureEntry} representing folders to create and associated optional README
+     *                            file paths.
+     * @param padding             A string used for formatting log messages, to align the log output visually.
+     */
+    public static void processArchitectureAndReadme(final ArchitectureConfig config, final List<ArchitectureEntry> architectureEntries, final String padding) {
 
         final Path   baseTargetPathForArch = buildBaseTargetPathForArch();
         final String mainDefaultReadme     = getMainReadmeFile.apply(config.getMainReadme(), config.getModel());
@@ -79,6 +112,12 @@ public class ArchDesignUtils {
         processReadme(config, "", mainDefaultReadme);
     }
 
+    /**
+     * Processes the creation of folder structures only based on a list of architecture entries.
+     *
+     * @param architectureEntries A list of {@link ArchitectureEntry} objects, each representing a folder to be created.
+     * @param padding             A string used for formatting log messages, to align the log output visually.
+     */
     public static void processArchitectureOnly(final List<ArchitectureEntry> architectureEntries, final String padding) {
 
         final Path baseTargetPathForArch = buildBaseTargetPathForArch();
@@ -93,6 +132,18 @@ public class ArchDesignUtils {
         });
     }
 
+    /**
+     * Processes a specific README file based on the provided configuration and paths.
+     * <p>
+     * This method sets up the copying of a given readme to its target folder.
+     *
+     * @param config       The {@link ArchitectureConfig} object that includes architecture parameters such as the model type for
+     *                     determining the source directory structure.
+     * @param targetFolder The target folder path where the README file should be copied. If null or empty, the file
+     *                     will be copied with its original name at the base target path.
+     * @param readmeFile   The name of the README file to be processed. If it is null or blank, the method
+     *                     will log a message and exit without performing any action.
+     */
     public static void processReadme(final ArchitectureConfig config, final String targetFolder, final String readmeFile) {
 
         if (isNullOrBlank.test(readmeFile)) {
