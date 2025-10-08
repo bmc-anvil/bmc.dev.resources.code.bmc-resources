@@ -14,14 +14,14 @@ import org.mockito.MockedStatic;
 
 import bmc.dev.resources.code.bmcresources.config.ResourceEntry;
 import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
-import bmc.dev.resources.code.bmcresources.io.ConfigFileReader;
+import bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader;
 import bmc.dev.resources.code.support.InjectorResetForTest;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesProcessor.processResources;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourceEntries;
-import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.extractConfigFileEntries;
+import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extractConfigFileEntries;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
 import static bmc.dev.resources.code.support.ConstantsForTest.*;
@@ -110,7 +110,7 @@ class ResourcesProcessorTest extends InjectorResetForTest {
     private static void mockClassesAndProcessResources(final List<ResourceEntry> upstreamResources, final List<ResourceEntry> userResources,
             final URL testJarSupplier, final ResourcesConfig resourcesConfig) {
 
-        try (final MockedStatic<ConfigFileReader> mockedConfigReader = mockStatic(ConfigFileReader.class);
+        try (final MockedStatic<BMCConfigFileReader> mockedConfigReader = mockStatic(BMCConfigFileReader.class);
              final MockedStatic<ResourcesUtils> mockedResourceUtils = mockStatic(ResourcesUtils.class)) {
             mockedConfigReader.when(() -> extractConfigFileEntries(FILE_RESOURCES_UPSTREAM, extractResources)).thenReturn(ofNullable(upstreamResources));
             mockedConfigReader.when(() -> extractConfigFileEntries(FILE_RESOURCES_USER, extractResources)).thenReturn(ofNullable(userResources));

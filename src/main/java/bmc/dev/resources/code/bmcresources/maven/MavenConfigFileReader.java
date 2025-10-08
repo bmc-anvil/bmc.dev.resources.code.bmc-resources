@@ -32,7 +32,8 @@ public class MavenConfigFileReader {
      *
      * @param propertyToRead the name of the property whose value should be retrieved
      *
-     * @return an {@code Optional<String>} containing the value of the specified property or an {@link Optional#empty()} if the property is not found.
+     * @return an {@link Optional} (of {@link String}) containing the value of the specified property or an {@link Optional#empty()} if the property is not
+     * found.
      */
     public static Optional<String> getMavenPropertyValue(final String propertyToRead) {
 

@@ -9,11 +9,12 @@ import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
 import bmc.dev.resources.code.bmcresources.config.GeneralConfig;
 import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
 import bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchitectureExecution.createArchitecture;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesExecution.createResources;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.hasPluginVersionChanged;
@@ -27,23 +28,20 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURC
  */
 @Slf4j
 @Mojo(name = "generate-architecture", defaultPhase = GENERATE_SOURCES, threadSafe = true)
+@Setter
+@Getter
 public class ArchResourcesGeneratorMojo extends AbstractMojo {
 
     /**
      * Configuration for architecture-related operations during the plugin execution.
      */
     @Parameter
-    private final ArchitectureConfig architecture  = new ArchitectureConfig();
+    private ArchitectureConfig architecture  = new ArchitectureConfig();
     /**
      * General plugin configuration options.
      */
     @Parameter
-    private final GeneralConfig      generalConfig = new GeneralConfig();
-    /**
-     * Configuration for resources-related operations during the plugin execution.
-     */
-    @Parameter
-    private final ResourcesConfig    resources     = new ResourcesConfig();
+    private GeneralConfig      generalConfig = new GeneralConfig();
     /**
      * The Maven project:
      * <p>
@@ -52,7 +50,12 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
      * build configurations, and properties associated with the project.
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private       MavenProject       mavenProject;
+    private MavenProject       mavenProject;
+    /**
+     * Configuration for resources-related operations during the plugin execution.
+     */
+    @Parameter
+    private ResourcesConfig    resources     = new ResourcesConfig();
 
     /**
      * This is the Plugin's entry point.

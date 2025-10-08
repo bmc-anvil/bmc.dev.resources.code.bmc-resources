@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
-import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.extractConfigFileEntries;
+import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extractConfigFileEntries;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;

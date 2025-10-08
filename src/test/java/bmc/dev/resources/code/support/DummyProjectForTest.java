@@ -20,6 +20,12 @@ import static java.util.UUID.randomUUID;
 @Slf4j
 public class DummyProjectForTest {
 
+    public static final String artifactId      = "bmc-resources";
+    public static final String groupId         = "bmc.dev.resources.code";
+    public static final String sourceDirectory = "/src/main/java";
+    public static final String testPomFile     = "test-pom.xml";
+    public static final String version         = "bmc-local";
+
     /**
      * Creates a {@link MavenProject} configure with a test-pom.xml and a baseDir.
      * <p>
@@ -35,27 +41,29 @@ public class DummyProjectForTest {
     @SneakyThrows
     public static MavenProject createWithTestBaseDir() {
 
-        final MavenProject project = new MavenProject();
-        final Build        build   = new Build();
-        final Plugin       plugin  = new Plugin();
-
-        plugin.setGroupId("bmc.dev.resources.code");
-        plugin.setArtifactId("bmc-resources");
-        plugin.setVersion("bmc-local");
-
-        build.addPlugin(plugin);
-        project.setBuild(build);
-
-        final String testPomFile     = "test-pom.xml";
-        final URL    pomFileResource = DummyProjectForTest.class.getResource("/" + testPomFile);
-        final Path   basePath        = Path.of(requireNonNull(pomFileResource).getPath()).getParent();
-        final Path   tempDirPath     = createDirectory(basePath.resolve("tmp-" + randomUUID()));
-        final String target          = tempDirPath.resolve(testPomFile).toString();
+        final MavenProject project         = new MavenProject();
+        final Build        build           = new Build();
+        final Plugin       plugin          = new Plugin();
+        final URL          pomFileResource = DummyProjectForTest.class.getResource("/" + testPomFile);
+        final Path         basePath        = Path.of(requireNonNull(pomFileResource).getPath()).getParent();
+        final Path         tempDirPath     = createDirectory(basePath.resolve("tmp-" + randomUUID()));
+        final String       target          = tempDirPath.resolve(testPomFile).toString();
+        final File         temp            = basePath.resolve(target).toFile();
 
         copyResourceFile(basePath, testPomFile, target);
 
-        final File temp = basePath.resolve(target).toFile();
+        plugin.setGroupId(groupId);
+        plugin.setArtifactId(artifactId);
+        plugin.setVersion(version);
+
+        build.setSourceDirectory(basePath.resolve(sourceDirectory).toString());
+        build.addPlugin(plugin);
+
         project.setFile(temp);
+        project.setBuild(build);
+        project.setGroupId(groupId);
+        project.setArtifactId(artifactId);
+        project.setVersion(version);
 
         log.info("Created project for this test with path:\n[{}]", tempDirPath);
 

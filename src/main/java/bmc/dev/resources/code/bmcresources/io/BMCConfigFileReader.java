@@ -1,6 +1,7 @@
 package bmc.dev.resources.code.bmcresources.io;
 
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -8,19 +9,21 @@ import java.util.function.Function;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import static bmc.dev.resources.code.bmcresources.io.IOUtilities.getBufferedReaderFromResource;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 /**
- * Utility class for reading and processing configuration files.
+ * Utility class for reading and processing BMC-specific configuration files.
  */
 @Slf4j
 @UtilityClass
-public class ConfigFileReader {
+public class BMCConfigFileReader {
 
     /**
-     * Reads and processes any type of configuration files from the classpath via a given extractor.
+     * Reads and processes any type of BMC configuration file from the classpath via a given extractor and returns each line as a corresponding entry type in a
+     * list.
      *
      * @param configFile       the name of the configuration file located in the classpath
      * @param contentExtractor the function to extract entries from the BufferedReader
@@ -32,7 +35,8 @@ public class ConfigFileReader {
      */
     public static <T> Optional<List<T>> extractConfigFileEntries(final String configFile, final Function<BufferedReader, List<T>> contentExtractor) {
 
-        try (final BufferedReader configFileReader = getBufferedReaderFromResource(configFile, ConfigFileReader.class)) {
+        try (final BufferedReader configFileReader =
+                     new BufferedReader(new InputStreamReader(requireNonNull(BMCConfigFileReader.class.getResourceAsStream("/" + configFile)), UTF_8))) {
 
             final List<T> configEntries = contentExtractor.apply(configFileReader);
 
@@ -44,6 +48,7 @@ public class ConfigFileReader {
             }
 
             return of(configEntries);
+
         } catch (final Exception e) {
             log.error("Error processing config file: [{}]", configFile, e);
             throw new IllegalArgumentException(e);

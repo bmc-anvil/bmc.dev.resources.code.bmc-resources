@@ -8,7 +8,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignUtils.*;
-import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.extractConfigFileEntries;
+import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extractConfigFileEntries;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.*;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;

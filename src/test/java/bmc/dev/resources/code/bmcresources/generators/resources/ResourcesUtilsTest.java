@@ -15,7 +15,7 @@ import bmc.dev.resources.code.support.InjectorResetForTest;
 
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.getJarUrl;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourceEntries;
-import static bmc.dev.resources.code.bmcresources.io.ConfigFileReader.extractConfigFileEntries;
+import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extractConfigFileEntries;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFile;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFolder;
 import static bmc.dev.resources.code.bmcresources.io.OSUtilities.makeFileExecutable;
