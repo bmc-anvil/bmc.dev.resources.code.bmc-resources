@@ -56,8 +56,7 @@ public class ResourcesUtils {
 
         final Path projectBasePath = getMavenProject().getBasedir().toPath();
 
-        resourceEntries.forEach(configEntry -> {
-
+        for (final ResourceEntry configEntry : resourceEntries) {
             final String source               = configEntry.source();
             final String target               = configEntry.target();
             final Path   sourcePathAsResource = Path.of(requireNonNull(ResourcesUtils.class.getResource("/" + source)).getPath());
@@ -75,7 +74,7 @@ public class ResourcesUtils {
             configEntry.permission()
                        .filter(EXECUTABLE_PERMISSION::equals)
                        .ifPresent(_ -> makeFileExecutable(configEntry.target()));
-        });
+        }
     }
 
 }

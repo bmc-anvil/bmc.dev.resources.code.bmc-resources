@@ -15,6 +15,7 @@ import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCur
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("checkstyle:MagicNumber")
 class MavenConfigFileWriterTest extends InjectorResetForTest {
 
     private static final String PROPERTY_0 = "test.property.0";

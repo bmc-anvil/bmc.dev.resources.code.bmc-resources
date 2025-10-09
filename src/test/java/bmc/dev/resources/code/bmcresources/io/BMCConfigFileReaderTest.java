@@ -11,6 +11,7 @@ import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extract
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("checkstyle:MagicNumber")
 class BMCConfigFileReaderTest {
 
     @Test

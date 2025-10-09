@@ -10,10 +10,30 @@ import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesi
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignUtils.*;
 import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extractConfigFileEntries;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 class ArchDesignProcessorTest {
+
+    @Test
+    void processArchitecture_withExistingModelAndNotSkippingReadme_shouldProcessBothArchitectureAndReadme() {
+
+        final ArchitectureConfig architectureConfig = new ArchitectureConfig();
+        architectureConfig.setModel("clean_ddd_hexa_for_tests");
+        architectureConfig.setSkipReadme(false);
+
+        try (final MockedStatic<ArchDesignUtils> mockedArchUtils = mockStatic(ArchDesignUtils.class);
+             final MockedStatic<BMCConfigFileReader> mockedBMCFileReader = mockStatic(BMCConfigFileReader.class)) {
+
+            mockedBMCFileReader.when(() -> extractConfigFileEntries(any(), any())).thenCallRealMethod();
+
+            processArchitecture(architectureConfig);
+
+            mockedArchUtils.verify(() -> logArchitectureConfiguration(any()), times(1));
+            mockedBMCFileReader.verify(() -> extractConfigFileEntries(any(), any()), times(1));
+            mockedArchUtils.verify(() -> processArchitectureOnly(any(), any()), never());
+            mockedArchUtils.verify(() -> processArchitectureAndReadme(any(), any(), any()), times(1));
+        }
+    }
 
     @Test
     void processArchitecture_withExistingModelAndSkipReadme_shouldProcessArchitectureAndSkipReadmeCreation() {
@@ -32,28 +52,7 @@ class ArchDesignProcessorTest {
             mockedArchUtils.verify(() -> logArchitectureConfiguration(any()), times(1));
             mockedBMCFileReader.verify(() -> extractConfigFileEntries(any(), any()), times(1));
             mockedArchUtils.verify(() -> processArchitectureOnly(any(), any()), times(1));
-            mockedArchUtils.verify(() -> processArchitectureAndReadme(any(), any(), any()), times(0));
-        }
-    }
-
-    @Test
-    void processArchitecture_withExistingModelAndNotSkippingReadme_shouldProcessBothArchitectureAndReadme() {
-
-        final ArchitectureConfig architectureConfig = new ArchitectureConfig();
-        architectureConfig.setModel("clean_ddd_hexa_for_tests");
-        architectureConfig.setSkipReadme(false);
-
-        try (final MockedStatic<ArchDesignUtils> mockedArchUtils = mockStatic(ArchDesignUtils.class);
-             final MockedStatic<BMCConfigFileReader> mockedBMCFileReader = mockStatic(BMCConfigFileReader.class)) {
-
-            mockedBMCFileReader.when(() -> extractConfigFileEntries(any(), any())).thenCallRealMethod();
-
-            processArchitecture(architectureConfig);
-
-            mockedArchUtils.verify(() -> logArchitectureConfiguration(any()), times(1));
-            mockedBMCFileReader.verify(() -> extractConfigFileEntries(any(), any()), times(1));
-            mockedArchUtils.verify(() -> processArchitectureOnly(any(), any()), times(0));
-            mockedArchUtils.verify(() -> processArchitectureAndReadme(any(), any(), any()), times(1));
+            mockedArchUtils.verify(() -> processArchitectureAndReadme(any(), any(), any()), never());
         }
     }
 

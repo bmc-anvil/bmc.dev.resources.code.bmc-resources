@@ -54,7 +54,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
 
     }
 
-    @SuppressWarnings("checkstyle:MethodLength")
+    @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:MagicNumber"})
     @Test
     @Order(MIN_VALUE)
     void logArchitectureConfiguration_shouldCorrectlyLogConfiguration() {
@@ -161,7 +161,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
             processArchitectureOnly(architectureEntryList, padding);
 
             mockedIOUtilities.verify(() -> createDirectoriesSafely(any()), times(architectureEntryList.size()));
-            mockedArchDesignUtils.verify(() -> processReadme(any(), any(), any()), times(0));
+            mockedArchDesignUtils.verify(() -> processReadme(any(), any(), any()), never());
         }
     }
 
@@ -189,7 +189,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
 
             processReadme(architectureConfig, "", readmeFile);
 
-            mockedIOUtilities.verify(() -> copyResourceFile(any(), any(), any()), times(0));
+            mockedIOUtilities.verify(() -> copyResourceFile(any(), any(), any()), never());
         }
     }
 

@@ -10,8 +10,7 @@ import static bmc.dev.resources.code.bmcresources.generators.resources.Resources
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesProcessor.processResources;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 class ResourcesExecutionTest {
 
@@ -42,8 +41,8 @@ class ResourcesExecutionTest {
 
             createResources(resourcesConfig);
 
-            mockedResourcesProcessor.verify(() -> processResources(any()), times(0));
-            mockedMavenConfigWriter.verify(() -> writeMavenProperty(any(), any()), times(0));
+            mockedResourcesProcessor.verify(() -> processResources(any()), never());
+            mockedMavenConfigWriter.verify(() -> writeMavenProperty(any(), any()), never());
         }
 
     }
