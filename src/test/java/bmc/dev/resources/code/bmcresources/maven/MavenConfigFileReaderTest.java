@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_COMPLETED_ARCH;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileReader.getMavenPropertyValue;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readAllLines;
@@ -33,7 +33,7 @@ class MavenConfigFileReaderTest extends InjectorResetForTest {
 
         final MavenProject project = createWithTestBaseDir();
 
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final Optional<String> mavenPropertyResult = getMavenPropertyValue("not.exists");
 
@@ -46,7 +46,7 @@ class MavenConfigFileReaderTest extends InjectorResetForTest {
         final MavenProject project       = createWithTestBaseDir();
         final String       propertyValue = "true";
 
-        setMavenProject(project);
+        injectMavenProject(project);
         writeMavenProperty(PROP_COMPLETED_ARCH, propertyValue);
 
         final Optional<String> mavenPropertyResult = getMavenPropertyValue(PROP_COMPLETED_ARCH);
@@ -61,7 +61,7 @@ class MavenConfigFileReaderTest extends InjectorResetForTest {
 
         final MavenProject project              = createWithTestBaseDir();
         final String       expectedErrorMessage = "Simulated Error Message";
-        setMavenProject(project);
+        injectMavenProject(project);
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
 
         /*
@@ -85,7 +85,7 @@ class MavenConfigFileReaderTest extends InjectorResetForTest {
         final MavenProject project       = createWithTestBaseDir();
         final String       propertyValue = "true";
 
-        setMavenProject(project);
+        injectMavenProject(project);
         writeMavenProperty(PROP_COMPLETED_ARCH, propertyValue);
 
         final Optional<String> mavenPropertyResult = getMavenPropertyValue("not.exists");

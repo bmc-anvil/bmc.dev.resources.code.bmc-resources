@@ -74,7 +74,7 @@ public class ArchDesignUtils {
         log.info(formatColor.apply(BLUE, " --- skip: [{}]"), config.isSkip());
         log.info(formatColor.apply(BLUE, " --- skipReadmes: [{}]"), config.isSkipReadme());
         log.info(formatColor.apply(BLUE, " --- model: [{}]"), config.getModel());
-        log.info(formatColor.apply(BLUE, " --- mainReadme: [{}]"), config.getMainReadme());
+        log.info(formatColor.apply(BLUE, " --- mainReadme: [{}]"), ofNullable(config.getMainReadme()).orElse(config.getModel()));
         log.info(formatColor.apply(BLUE, " --- artifactId: [{}]"), mavenProject.getArtifactId());
         log.info(formatColor.apply(BLUE, " --- groupId: [{}]"), mavenProject.getGroupId());
         log.info(formatColor.apply(BLUE, " --- mavenSourceDirectory: [{}]"), mavenProject.getBuild().getSourceDirectory());

@@ -50,7 +50,7 @@ public class IOUtilities {
                 log.warn(formatBoldColor.apply(YELLOW, "Could not find [{}]"), sourceResourceName);
             } else {
                 copy(sourceStream, baseTargetPath.resolve(targetResourceName), REPLACE_EXISTING);
-                log.debug("Resource [{}] created", targetResourceName);
+                log.debug(formatColor.apply(CYAN, "File Resource [{}] created"), targetResourceName);
             }
         } catch (final Exception e) {
             log.error("Error copying resource: [{}] to [{}] ", sourceResourceName, targetResourceName, e);
@@ -84,9 +84,8 @@ public class IOUtilities {
                     if (isDirectory(path)) {
                         createDirectoriesSafely(targetPathOnRealFs);
                     } else {
-                        //createDirectory(targetPathOnRealFs.getParent());
                         copy(path, targetPathOnRealFs, REPLACE_EXISTING);
-                        log.info("Resource [{}] created", path);
+                        log.debug(formatColor.apply(CYAN, "Folder Resource [{}] created"), targetPath);
                     }
                 }
             }
@@ -107,6 +106,7 @@ public class IOUtilities {
 
         try {
             createDirectories(target);
+            log.debug(formatColor.apply(CYAN, "Directory [{}] created"), target);
         } catch (final Exception e) {
             log.error("could not create directory [{}]", target, e);
             throw new RuntimeException(e);

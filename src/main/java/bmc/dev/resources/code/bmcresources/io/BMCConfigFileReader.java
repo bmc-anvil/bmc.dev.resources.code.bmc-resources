@@ -40,7 +40,7 @@ public class BMCConfigFileReader {
 
             final List<T> configEntries = contentExtractor.apply(configFileReader);
 
-            log.info("[{}] {} to process", configEntries.size(), configFile);
+            log.info("[{}] has [{}] entries to process", configFile, configEntries.size());
 
             if (configEntries.isEmpty()) {
                 log.warn("Reduction computed configEntries size to 0, nothing will be processed.");

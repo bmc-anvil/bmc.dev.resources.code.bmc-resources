@@ -10,7 +10,7 @@ import bmc.dev.resources.code.support.InjectorResetForTest;
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.readAllLinesFromFile;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +29,7 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         final String       resourcesNotCompleted    = MVN_PREFIX + PROP_COMPLETED_RESOURCE + "=false";
         final String       architectureNotCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=false";
 
-        setMavenProject(project);
+        injectMavenProject(project);
 
         writeMavenProperty(PROPERTY_0, "00");
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
@@ -56,7 +56,7 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         final String       architectureCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=true";
         final String       versionStamp          = MVN_PREFIX + PROP_CREATED_WITH_VERSION + "=" + project.getPlugin(PLUGIN_KEY).getVersion();
 
-        setMavenProject(project);
+        injectMavenProject(project);
 
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
         writeMavenProperty(PROP_COMPLETED_RESOURCE, "true");
@@ -78,7 +78,7 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         final String       architectureCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=true";
         final String       versionStamp          = MVN_PREFIX + PROP_CREATED_WITH_VERSION + "=" + project.getPlugin(PLUGIN_KEY).getVersion();
 
-        setMavenProject(project);
+        injectMavenProject(project);
 
         writeMavenProperty(PROPERTY_0, "00");
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");

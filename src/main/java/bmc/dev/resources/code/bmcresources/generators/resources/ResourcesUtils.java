@@ -61,13 +61,13 @@ public class ResourcesUtils {
             final String target               = configEntry.target();
             final Path   sourcePathAsResource = Path.of(requireNonNull(ResourcesUtils.class.getResource("/" + source)).getPath());
 
-            log.debug(formatColor.apply(CYAN, "Writing resource [{}]"), sourcePathAsResource);
+            log.debug(formatColor.apply(CYAN, "Writing resource from path [{}]"), sourcePathAsResource);
 
             if (source.endsWith("/")) {
-                log.debug(formatColor.apply(CYAN, "Directory: [{}]"), sourcePathAsResource);
+                log.info("Directory - From: [{}] To [{}] ", source, target);
                 copyResourceFolder(getJarUrl(), source, Path.of(target));
             } else {
-                log.debug(formatColor.apply(CYAN, "File: [{}]"), sourcePathAsResource);
+                log.info("File - From: [{}] To [{}] ", source, target);
                 copyResourceFile(projectBasePath, source, target);
             }
 

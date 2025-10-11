@@ -19,7 +19,7 @@ import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extract
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFile;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFolder;
 import static bmc.dev.resources.code.bmcresources.io.OSUtilities.makeFileExecutable;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
 import static bmc.dev.resources.code.support.ConstantsForTest.TEST_JAR_NAME;
 import static bmc.dev.resources.code.support.ConstantsForTest.TEST_UPSTREAM_RESOURCES_CONFIG_FILE;
@@ -38,7 +38,7 @@ class ResourcesUtilsTest extends InjectorResetForTest {
 
         final MavenProject        mavenProject  = createWithTestBaseDir();
         final List<ResourceEntry> userResources = extractConfigFileEntries(TEST_UPSTREAM_RESOURCES_CONFIG_FILE, extractResources).orElseGet(ArrayList::new);
-        setMavenProject(mavenProject);
+        injectMavenProject(mavenProject);
 
         try (final MockedStatic<OSUtilities> mockedOSUtils = mockStatic(OSUtilities.class);
              final MockedStatic<IOUtilities> mockedIOUtils = mockStatic(IOUtilities.class);

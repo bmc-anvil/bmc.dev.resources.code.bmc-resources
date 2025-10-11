@@ -4,11 +4,11 @@ import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 
 import bmc.dev.resources.code.bmcresources.Constants;
-import bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector;
 import bmc.dev.resources.code.support.DummyProjectForTest;
 import bmc.dev.resources.code.support.InjectorResetForTest;
 
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.hasPluginVersionChanged;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +20,7 @@ public class VersioningUtilsTest extends InjectorResetForTest {
     public void currentVersionExists_returnsFalse() {
 
         final MavenProject project = DummyProjectForTest.createWithTestBaseDir();
-        MavenProjectInjector.setMavenProject(project);
+        injectMavenProject(project);
 
         stampCurrentPluginVersion();
 
@@ -33,7 +33,7 @@ public class VersioningUtilsTest extends InjectorResetForTest {
     public void differentVersionExists_returnsTrue() {
 
         final MavenProject project = DummyProjectForTest.createWithTestBaseDir();
-        MavenProjectInjector.setMavenProject(project);
+        injectMavenProject(project);
 
         writeMavenProperty(Constants.PROP_CREATED_WITH_VERSION, "=poteyto-potAHto");
 
@@ -46,7 +46,7 @@ public class VersioningUtilsTest extends InjectorResetForTest {
     public void noVersionExists_returnsTrue() {
 
         final MavenProject project = DummyProjectForTest.createWithTestBaseDir();
-        MavenProjectInjector.setMavenProject(project);
+        injectMavenProject(project);
 
         final Boolean result = hasPluginVersionChanged();
 

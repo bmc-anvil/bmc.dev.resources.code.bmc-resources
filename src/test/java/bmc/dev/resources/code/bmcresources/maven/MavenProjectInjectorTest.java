@@ -23,10 +23,10 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
         final MavenProject mavenProject  = createWithTestBaseDir();
         final MavenProject mavenProject2 = createWithTestBaseDir();
 
-        setMavenProject(mavenProject);
+        injectMavenProject(mavenProject);
         assertSame(mavenProject, getMavenProject());
 
-        setMavenProject(mavenProject2);
+        injectMavenProject(mavenProject2);
         assertSame(mavenProject, getMavenProject());
     }
 
@@ -34,7 +34,7 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
     void get_projectIsSet_returnsMavenProject() {
 
         final MavenProject mavenProject = createWithTestBaseDir();
-        setMavenProject(mavenProject);
+        injectMavenProject(mavenProject);
 
         assertSame(mavenProject, getMavenProject());
     }
@@ -43,7 +43,7 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
     void reset_projectIsSet_returnsNullMavenProject() {
 
         final MavenProject mavenProject = createWithTestBaseDir();
-        setMavenProject(mavenProject);
+        injectMavenProject(mavenProject);
         reset();
 
         assertThrows(IllegalStateException.class, MavenProjectInjector::getMavenProject);
@@ -54,12 +54,12 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
 
         final MavenProject mavenProject    = createWithTestBaseDir();
         final MavenProject mavenProject2   = createWithTestBaseDir();
-        final boolean      injectionResult = setMavenProject(mavenProject);
+        final boolean      injectionResult = injectMavenProject(mavenProject);
 
         assertTrue(injectionResult);
         assertSame(mavenProject, getMavenProject());
 
-        final boolean injectionResultOnSecondSet = setMavenProject(mavenProject2);
+        final boolean injectionResultOnSecondSet = injectMavenProject(mavenProject2);
         assertFalse(injectionResultOnSecondSet);
     }
 
@@ -67,7 +67,7 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
     void set_projectIsNotNull_returnsTrue() {
 
         final MavenProject mavenProject    = createWithTestBaseDir();
-        final boolean      injectionResult = setMavenProject(mavenProject);
+        final boolean      injectionResult = injectMavenProject(mavenProject);
 
         assertTrue(injectionResult);
         assertSame(mavenProject, getMavenProject());
@@ -76,7 +76,7 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
     @Test
     void set_projectIsNull_throwsIllegalArgumentException() {
 
-        assertThrows(IllegalArgumentException.class, () -> setMavenProject(null));
+        assertThrows(IllegalArgumentException.class, () -> injectMavenProject(null));
     }
 
 }

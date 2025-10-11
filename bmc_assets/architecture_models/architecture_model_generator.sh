@@ -47,7 +47,7 @@ set +a
 : "${ROOT_DIR:?Missing ROOT_DIR in $CONFIG_FILE}"
 
 ROOT_DIR="$ROOT_DIR/$APP_NAME"
-STRUCTURE_FILE="$MODEL/${MODEL}.model"
+STRUCTURE_FILE="$MODEL/${MODEL}.config"
 TEMPLATE_PATH="$MODEL/readme_templates"
 
 if [[ ! -d "$MODEL" ]]; then
@@ -80,8 +80,8 @@ while IFS= read -r line || [[ -n "${line:-}" ]]; do
     [[ -z "${line// /}" ]] && continue
     [[ "$line" =~ ^[[:space:]]*# ]] && continue
 
-    # Split the line at the first colon into path and template
-    IFS=':' read -r raw_path raw_tmpl <<<"$line"
+    # Split the line at the first comma into path and template
+    IFS=',' read -r raw_path raw_tmpl <<<"$line"
 
     # Trim whitespace
     path_rel="$(echo "${raw_path:-}" | xargs)"

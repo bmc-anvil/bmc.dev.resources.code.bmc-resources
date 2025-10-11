@@ -22,7 +22,7 @@ import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesProcessor.processResources;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesUtils.processResourceEntries;
 import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extractConfigFileEntries;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
 import static bmc.dev.resources.code.support.ConstantsForTest.*;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
@@ -42,7 +42,7 @@ class ResourcesProcessorTest extends InjectorResetForTest {
 
         final MavenProject mavenProject = createWithTestBaseDir();
         final Path         testBasePath = mavenProject.getBasedir().toPath();
-        setMavenProject(mavenProject);
+        injectMavenProject(mavenProject);
 
         final ResourcesConfig resourcesConfig = new ResourcesConfig();
         getProperties().setProperty(PROP_COMPLETED_RESOURCE, "false");
@@ -64,7 +64,7 @@ class ResourcesProcessorTest extends InjectorResetForTest {
 
         final MavenProject mavenProject = createWithTestBaseDir();
         final Path         testBasePath = mavenProject.getBasedir().toPath();
-        setMavenProject(mavenProject);
+        injectMavenProject(mavenProject);
 
         final ResourcesConfig resourcesConfig = new ResourcesConfig();
         resourcesConfig.setOverwriteUserResources(false);
@@ -84,7 +84,7 @@ class ResourcesProcessorTest extends InjectorResetForTest {
 
         final MavenProject mavenProject = createWithTestBaseDir();
         final Path         testBasePath = mavenProject.getBasedir().toPath();
-        setMavenProject(mavenProject);
+        injectMavenProject(mavenProject);
 
         final ResourcesConfig resourcesConfig = new ResourcesConfig();
         resourcesConfig.setOverwriteUserResources(true);

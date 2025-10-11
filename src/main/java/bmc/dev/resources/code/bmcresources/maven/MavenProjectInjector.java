@@ -59,7 +59,7 @@ public class MavenProjectInjector {
      * <p>
      * Although this should be set only once with a single mavenProject, precautions are in place to avoid possible problems in the future.
      */
-    public static boolean setMavenProject(final MavenProject mavenProject) {
+    public static boolean injectMavenProject(final MavenProject mavenProject) {
 
         if (mavenProject == null) {
             throw new IllegalArgumentException(ERROR_MAVEN_PROJECT_PARAM_NULL);

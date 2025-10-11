@@ -9,11 +9,13 @@ import bmc.dev.resources.code.bmcresources.config.GeneralConfig;
 import bmc.dev.resources.code.bmcresources.config.ResourcesConfig;
 import bmc.dev.resources.code.bmcresources.generators.archdesign.ArchitectureExecution;
 import bmc.dev.resources.code.bmcresources.generators.resources.ResourcesExecution;
+import bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector;
 import bmc.dev.resources.code.bmcresources.utils.VersioningUtils;
 import bmc.dev.resources.code.support.InjectorResetForTest;
 
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchitectureExecution.createArchitecture;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesExecution.createResources;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static org.mockito.Mockito.*;
 
@@ -37,12 +39,14 @@ class ArchResourcesGeneratorMojoTest extends InjectorResetForTest {
 
         try (final MockedStatic<ResourcesExecution> mockedResourcesExecution = mockStatic(ResourcesExecution.class);
              final MockedStatic<ArchitectureExecution> mockedArchitectureExecution = mockStatic(ArchitectureExecution.class);
-             final MockedStatic<VersioningUtils> mockedVersioningUtils = mockStatic(VersioningUtils.class)) {
+             final MockedStatic<VersioningUtils> mockedVersioningUtils = mockStatic(VersioningUtils.class);
+             final MockedStatic<MavenProjectInjector> mockedMavenProjectInjector = mockStatic(MavenProjectInjector.class)) {
 
             mockedVersioningUtils.when(VersioningUtils::hasPluginVersionChanged).thenReturn(true);
 
             mojo.execute();
 
+            mockedMavenProjectInjector.verify(() -> injectMavenProject(project));
             mockedResourcesExecution.verify(() -> createResources(resourcesConfig));
             mockedArchitectureExecution.verify(() -> createArchitecture(architectureConfig));
             mockedVersioningUtils.verify(VersioningUtils::stampCurrentPluginVersion);
@@ -67,12 +71,13 @@ class ArchResourcesGeneratorMojoTest extends InjectorResetForTest {
 
         try (final MockedStatic<ResourcesExecution> mockedResourcesExecution = mockStatic(ResourcesExecution.class);
              final MockedStatic<ArchitectureExecution> mockedArchitectureExecution = mockStatic(ArchitectureExecution.class);
-             final MockedStatic<VersioningUtils> mockedVersioningUtils = mockStatic(VersioningUtils.class)) {
+             final MockedStatic<VersioningUtils> mockedVersioningUtils = mockStatic(VersioningUtils.class);
+             final MockedStatic<MavenProjectInjector> mockedMavenProjectInjector = mockStatic(MavenProjectInjector.class)) {
 
             mockedVersioningUtils.when(VersioningUtils::hasPluginVersionChanged).thenReturn(false);
 
             mojo.execute();
-
+            mockedMavenProjectInjector.verify(() -> injectMavenProject(project));
             mockedResourcesExecution.verifyNoInteractions();
             mockedArchitectureExecution.verifyNoInteractions();
             mockedVersioningUtils.verify(VersioningUtils::hasPluginVersionChanged);
@@ -98,10 +103,12 @@ class ArchResourcesGeneratorMojoTest extends InjectorResetForTest {
 
         try (final MockedStatic<ResourcesExecution> mockedResourcesExecution = mockStatic(ResourcesExecution.class);
              final MockedStatic<ArchitectureExecution> mockedArchitectureExecution = mockStatic(ArchitectureExecution.class);
-             final MockedStatic<VersioningUtils> mockedVersioningUtils = mockStatic(VersioningUtils.class)) {
+             final MockedStatic<VersioningUtils> mockedVersioningUtils = mockStatic(VersioningUtils.class);
+             final MockedStatic<MavenProjectInjector> mockedMavenProjectInjector = mockStatic(MavenProjectInjector.class)) {
 
             mojo.execute();
 
+            mockedMavenProjectInjector.verify(() -> injectMavenProject(project));
             mockedResourcesExecution.verifyNoInteractions();
             mockedArchitectureExecution.verifyNoInteractions();
             mockedVersioningUtils.verifyNoInteractions();

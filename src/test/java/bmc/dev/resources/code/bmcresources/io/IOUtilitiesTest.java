@@ -17,7 +17,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.*;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.support.ConstantsForTest.*;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static java.lang.Boolean.TRUE;
@@ -59,7 +59,7 @@ class IOUtilitiesTest extends InjectorResetForTest {
         final URL          jarUrl                  = this.getClass().getResource("/" + TEST_JAR_NAME);
         final String       sourceFileInFolderInJar = "workflow.yml";
         final Path         targetFolder            = basePath.resolve(SOURCE_FOLDER_IN_JAR);
-        setMavenProject(project);
+        injectMavenProject(project);
 
         copyResourceFolder(jarUrl, SOURCE_FOLDER_IN_JAR, targetFolder);
 
@@ -80,7 +80,7 @@ class IOUtilitiesTest extends InjectorResetForTest {
         final MavenProject project      = createWithTestBaseDir();
         final Path         basePath     = project.getBasedir().toPath();
         final Path         targetFolder = basePath.resolve(SOURCE_FOLDER_IN_JAR);
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceFolder(null, SOURCE_FOLDER_IN_JAR, targetFolder));
         assertInstanceOf(NullPointerException.class, runtimeException.getCause());
@@ -97,7 +97,7 @@ class IOUtilitiesTest extends InjectorResetForTest {
         final Path         basePath     = project.getBasedir().toPath();
         final URL          jarUrl       = this.getClass().getResource("/" + TEST_JAR_NAME);
         final Path         targetFolder = basePath.resolve(SOURCE_FOLDER_NOT_IN_JAR);
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final RuntimeException runtimeException =
                 assertThrows(RuntimeException.class, () -> copyResourceFolder(jarUrl, SOURCE_FOLDER_NOT_IN_JAR, targetFolder));
@@ -114,7 +114,7 @@ class IOUtilitiesTest extends InjectorResetForTest {
         final URL          jarUrl       = this.getClass().getResource("/" + TEST_JAR_NAME);
         final Path         targetFolder = null;
         final MavenProject project      = createWithTestBaseDir();
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> copyResourceFolder(jarUrl, SOURCE_FOLDER_IN_JAR, targetFolder));
         assertInstanceOf(NullPointerException.class, runtimeException.getCause());

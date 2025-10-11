@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchitectureExecution.createArchitecture;
 import static bmc.dev.resources.code.bmcresources.generators.resources.ResourcesExecution.createResources;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
 import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.hasPluginVersionChanged;
@@ -76,7 +77,7 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
     @Override
     public void execute() {
 
-        setMavenProject(mavenProject);
+        injectMavenProject(mavenProject);
 
         if (generalConfig.isSkip()) {
             log.info(formatBoldColor.apply(YELLOW, "Plugin execution skip is set to true. Nothing to do."));

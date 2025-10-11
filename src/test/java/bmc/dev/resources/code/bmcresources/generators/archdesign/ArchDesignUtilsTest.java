@@ -24,7 +24,7 @@ import bmc.dev.resources.code.support.InjectorResetForTest;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignUtils.*;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.copyResourceFile;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectoriesSafely;
-import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.setMavenProject;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.calculateLeftAlignedPadding;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static java.lang.Integer.MIN_VALUE;
@@ -46,7 +46,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
         final String       sourceDirectory = project.getBuild().getSourceDirectory();
         final Path         expectedPath    = Path.of(sourceDirectory, groupId, artifactId);
 
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final Path baseTargetPathForArch = buildBaseTargetPathForArch();
 
@@ -71,7 +71,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
         architectureConfig.setSkip(true);
         architectureConfig.setSkipReadme(false);
 
-        setMavenProject(project);
+        injectMavenProject(project);
 
         try (final MockedStatic<LoggerFactory> mockedLoggerFactory = mockStatic(org.slf4j.LoggerFactory.class)) {
             mockedLoggerFactory.when(() -> LoggerFactory.getLogger(ArchDesignUtils.class)).thenReturn(mockedLogger);
@@ -118,7 +118,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
         architectureConfig.setMainReadme("test_mainReadme.md");
         architectureConfig.setSkip(true);
         architectureConfig.setSkipReadme(false);
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final Path path = buildBaseTargetPathForArch();
 
@@ -148,7 +148,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
         architectureConfig.setMainReadme("test_mainReadme.md");
         architectureConfig.setSkip(true);
         architectureConfig.setSkipReadme(false);
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final Path path = buildBaseTargetPathForArch();
 
@@ -177,7 +177,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
         architectureConfig.setMainReadme("test_mainReadme.md");
         architectureConfig.setSkip(true);
         architectureConfig.setSkipReadme(false);
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final Path path = buildBaseTargetPathForArch();
 
@@ -203,7 +203,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
         architectureConfig.setMainReadme("test_mainReadme.md");
         architectureConfig.setSkip(true);
         architectureConfig.setSkipReadme(false);
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final Path path = buildBaseTargetPathForArch();
 
@@ -229,7 +229,7 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
         architectureConfig.setMainReadme("test_mainReadme.md");
         architectureConfig.setSkip(true);
         architectureConfig.setSkipReadme(false);
-        setMavenProject(project);
+        injectMavenProject(project);
 
         final Path path = buildBaseTargetPathForArch();
 
