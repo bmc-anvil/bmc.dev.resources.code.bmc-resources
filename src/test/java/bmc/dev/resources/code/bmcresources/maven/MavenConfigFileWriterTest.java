@@ -11,7 +11,6 @@ import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.io.IOUtilities.readAllLinesFromFile;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
-import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,7 +33,6 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         writeMavenProperty(PROPERTY_0, "00");
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
         writeMavenProperty(PROPERTY_1, "01");
-        stampCurrentPluginVersion();
         writeMavenProperty(PROP_COMPLETED_RESOURCE, "true");
         writeMavenProperty(PROPERTY_2, "02");
 
@@ -45,7 +43,7 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         final List<String> strings = readAllLinesFromFile(project.getBasedir().toPath().resolve(".mvn", "maven.config"));
 
         assertEquals(architectureNotCompleted, strings.get(1));
-        assertEquals(resourcesNotCompleted, strings.get(4));
+        assertEquals(resourcesNotCompleted, strings.get(3));
     }
 
     @Test
@@ -54,20 +52,17 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         final MavenProject project               = createWithTestBaseDir();
         final String       resourcesCompleted    = MVN_PREFIX + PROP_COMPLETED_RESOURCE + "=true";
         final String       architectureCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=true";
-        final String       versionStamp          = MVN_PREFIX + PROP_CREATED_WITH_VERSION + "=" + project.getPlugin(PLUGIN_KEY).getVersion();
 
         injectMavenProject(project);
 
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
         writeMavenProperty(PROP_COMPLETED_RESOURCE, "true");
-        stampCurrentPluginVersion();
 
         final List<String> strings = readAllLinesFromFile(project.getBasedir().toPath().resolve(".mvn", "maven.config"));
 
-        assertEquals(3, strings.size());
+        assertEquals(2, strings.size());
         assertEquals(architectureCompleted, strings.get(0));
         assertEquals(resourcesCompleted, strings.get(1));
-        assertEquals(versionStamp, strings.get(2));
     }
 
     @Test
@@ -76,7 +71,6 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         final MavenProject project               = createWithTestBaseDir();
         final String       resourcesCompleted    = MVN_PREFIX + PROP_COMPLETED_RESOURCE + "=true";
         final String       architectureCompleted = MVN_PREFIX + PROP_COMPLETED_ARCH + "=true";
-        final String       versionStamp          = MVN_PREFIX + PROP_CREATED_WITH_VERSION + "=" + project.getPlugin(PLUGIN_KEY).getVersion();
 
         injectMavenProject(project);
 
@@ -84,18 +78,16 @@ class MavenConfigFileWriterTest extends InjectorResetForTest {
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
         writeMavenProperty(PROP_COMPLETED_RESOURCE, "true");
         writeMavenProperty(PROPERTY_1, "01");
-        stampCurrentPluginVersion();
         writeMavenProperty(PROPERTY_2, "02");
 
         final List<String> strings = readAllLinesFromFile(project.getBasedir().toPath().resolve(".mvn", "maven.config"));
 
-        assertEquals(6, strings.size());
+        assertEquals(5, strings.size());
         assertEquals(MVN_PREFIX + PROPERTY_0 + "=00", strings.get(0));
         assertEquals(architectureCompleted, strings.get(1));
         assertEquals(resourcesCompleted, strings.get(2));
         assertEquals(MVN_PREFIX + PROPERTY_1 + "=01", strings.get(3));
-        assertEquals(versionStamp, strings.get(4));
-        assertEquals(MVN_PREFIX + PROPERTY_2 + "=02", strings.get(5));
+        assertEquals(MVN_PREFIX + PROPERTY_2 + "=02", strings.get(4));
     }
 
 }

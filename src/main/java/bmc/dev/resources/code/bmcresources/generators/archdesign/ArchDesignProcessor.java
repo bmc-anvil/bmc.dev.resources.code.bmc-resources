@@ -42,7 +42,7 @@ public class ArchDesignProcessor {
     public static void processArchitecture(final ArchitectureConfig config) {
 
         if (isNullOrBlank.test(config.getModel())) {
-            log.warn(formatBoldColor.apply(YELLOW, ("Architecture Structure is blank, skipping.")));
+            log.warn(formatBoldColor.apply(YELLOW, ("Architecture Model is missing from the pom configuration, skipping.")));
         } else {
 
             log.info(formatColor.apply(YELLOW, ("Architecture Structure creation started.")));

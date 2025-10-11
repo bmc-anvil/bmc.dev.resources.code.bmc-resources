@@ -18,8 +18,6 @@ import static bmc.dev.resources.code.bmcresources.generators.resources.Resources
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
-import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.hasPluginVersionChanged;
-import static bmc.dev.resources.code.bmcresources.utils.VersioningUtils.stampCurrentPluginVersion;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
 
 /**
@@ -81,17 +79,14 @@ public class ArchResourcesGeneratorMojo extends AbstractMojo {
 
         if (generalConfig.isSkip()) {
             log.info(formatBoldColor.apply(YELLOW, "Plugin execution skip is set to true. Nothing to do."));
-        } else if (hasPluginVersionChanged()) {
-            log.info(formatBoldColor.apply(YELLOW, "New Project or different plugin version. Generating Architecture and Resources."));
+        } else {
+            log.info(formatBoldColor.apply(YELLOW, "Generating Architecture and Resources."));
             log.info(formatBoldColor.apply(YELLOW, "Architecture Structure and Resources creation started."));
 
             createResources(resources);
             createArchitecture(architecture);
-            stampCurrentPluginVersion();
 
             log.info(formatBoldColor.apply(YELLOW, "Architecture Structure and Resources creation completed."));
-        } else {
-            log.info(formatBoldColor.apply(YELLOW, "No change in plugin version since last run. Nothing to do."));
         }
 
         log.info("");

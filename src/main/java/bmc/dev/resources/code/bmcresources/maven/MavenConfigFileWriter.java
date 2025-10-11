@@ -41,16 +41,17 @@ public class MavenConfigFileWriter {
 
         final List<String> lines = readAllLinesFromFile(mavenConfigPath);
 
-        log.debug(formatColor.apply(CYAN, "lines before filtering: [{}]"), lines);
+        log.info(formatColor.apply(CYAN, "lines before filtering: [{}]"), lines);
 
         findPropertyIndex.apply(lines, propertyWithPrefix)
                          .ifPresentOrElse(index -> lines.set(index, updatedPropertyWithPrefix), () -> lines.add(updatedPropertyWithPrefix));
 
-        log.debug(formatColor.apply(CYAN, "lines after filtering: [{}]"), lines);
+        log.info(formatColor.apply(CYAN, "lines after filtering: [{}]"), lines);
 
         writeAllLinesToFile(lines, mavenConfigPath);
 
         log.info(formatBoldColor.apply(RED, "Updated [{}] with [{}=true]"), mavenConfigPath, MVN_PREFIX + propertyKey);
     }
+
 
 }

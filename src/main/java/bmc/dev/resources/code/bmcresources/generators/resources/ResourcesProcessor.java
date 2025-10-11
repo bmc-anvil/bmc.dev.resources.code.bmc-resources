@@ -47,7 +47,7 @@ public class ResourcesProcessor {
         if (!config.isOverwriteUserResources() && resourcesCompleted) {
             log.info(formatColor.apply(GREEN, "Skipping Processing user Resources. Overwrite is [{}], Completed is [{}]"), false, true);
         } else {
-            log.info(formatColor.apply(YELLOW, "Processing user Resources."));
+            log.info(formatColor.apply(YELLOW, "Processing user Resources. Forced Overwrite: [{}]"), config.isOverwriteUserResources());
 
             extractConfigFileEntries(FILE_RESOURCES_USER, extractResources).ifPresent(ResourcesUtils::processResourceEntries);
 
