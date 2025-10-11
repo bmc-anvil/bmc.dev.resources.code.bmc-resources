@@ -2,6 +2,7 @@ package bmc.dev.resources.code.bmcresources.generators.archdesign;
 
 import java.util.stream.Stream;
 
+import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -10,17 +11,19 @@ import org.mockito.MockedStatic;
 
 import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
 import bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter;
+import bmc.dev.resources.code.support.InjectorResetForTest;
 
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_COMPLETED_ARCH;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignProcessor.processArchitecture;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchitectureExecution.createArchitecture;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
-import static java.lang.System.getProperties;
+import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
+import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static java.util.Optional.ofNullable;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 
-class ArchitectureExecutionTest {
+class ArchitectureExecutionTest extends InjectorResetForTest {
 
     public static Stream<Arguments> skippingArchitecture() {
 
@@ -40,7 +43,10 @@ class ArchitectureExecutionTest {
     void createArchitecture_withSkipFalseAndAchNotCompleted_shouldProcessArchitectureAnWriteToMaven() {
 
         final ArchitectureConfig architectureConfig = new ArchitectureConfig();
+        final MavenProject       project            = createWithTestBaseDir();
+
         architectureConfig.setSkip(false);
+        injectMavenProject(project);
 
         try (final MockedStatic<ArchDesignProcessor> mockedArchProcessor = mockStatic(ArchDesignProcessor.class);
              final MockedStatic<MavenConfigFileWriter> mockedMavenConfigFileWriter = mockStatic(MavenConfigFileWriter.class)) {
@@ -56,7 +62,10 @@ class ArchitectureExecutionTest {
     @MethodSource("skippingArchitecture")
     void createArchitecture_withSkipTrueOrAchCompleted_shouldReturnAndDoNothing(final ArchitectureConfig architectureConfig, final String archCompleted) {
 
-        ofNullable(archCompleted).ifPresent(completed -> getProperties().setProperty(PROP_COMPLETED_ARCH, completed));
+        final MavenProject project = createWithTestBaseDir();
+        injectMavenProject(project);
+
+        ofNullable(archCompleted).ifPresent(completed -> writeMavenProperty(PROP_COMPLETED_ARCH, completed));
 
         try (final MockedStatic<ArchDesignProcessor> mockedArchProcessor = mockStatic(ArchDesignProcessor.class);
              final MockedStatic<MavenConfigFileWriter> mockedMavenConfigFileWriter = mockStatic(MavenConfigFileWriter.class)) {

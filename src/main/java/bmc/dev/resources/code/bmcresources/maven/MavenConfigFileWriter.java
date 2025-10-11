@@ -41,7 +41,7 @@ public class MavenConfigFileWriter {
 
         final List<String> lines = readAllLinesFromFile(mavenConfigPath);
 
-        log.info(formatColor.apply(CYAN, "lines before filtering: [{}]"), lines);
+        log.debug(formatColor.apply(CYAN, "lines before filtering: [{}]"), lines);
 
         findPropertyIndex.apply(lines, propertyWithPrefix)
                          .ifPresentOrElse(index -> lines.set(index, updatedPropertyWithPrefix), () -> lines.add(updatedPropertyWithPrefix));

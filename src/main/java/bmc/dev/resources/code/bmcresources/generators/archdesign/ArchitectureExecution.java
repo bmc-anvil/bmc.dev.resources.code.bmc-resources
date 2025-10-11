@@ -6,10 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_COMPLETED_ARCH;
 import static bmc.dev.resources.code.bmcresources.generators.archdesign.ArchDesignProcessor.processArchitecture;
-import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileUtils.isPropertySetAndTrue;
+import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileReader.getMavenPropertyValue;
 import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileWriter.writeMavenProperty;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.GREEN;
+import static java.lang.Boolean.FALSE;
 
 /**
  * Class for managing the execution of architecture design operations.
@@ -27,7 +28,7 @@ public class ArchitectureExecution {
      */
     public static void createArchitecture(final ArchitectureConfig architecture) {
 
-        final boolean archCompleted = isPropertySetAndTrue.test(PROP_COMPLETED_ARCH);
+        final boolean archCompleted = getMavenPropertyValue(PROP_COMPLETED_ARCH).map(Boolean::valueOf).orElse(FALSE);
         log.info("Architecture execution is marked as completed: [{}]", archCompleted);
 
         if (architecture.isSkip() || archCompleted) {

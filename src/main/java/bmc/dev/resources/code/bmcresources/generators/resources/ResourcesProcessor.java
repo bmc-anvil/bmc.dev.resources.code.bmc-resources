@@ -6,14 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.*;
 import static bmc.dev.resources.code.bmcresources.io.BMCConfigFileReader.extractConfigFileEntries;
+import static bmc.dev.resources.code.bmcresources.maven.MavenConfigFileReader.getMavenPropertyValue;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.extractResources;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatBoldColor;
 import static bmc.dev.resources.code.bmcresources.utils.LogFormatUtils.formatColor;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.GREEN;
 import static bmc.dev.resources.code.bmcresources.utils.TerminalColors.YELLOW;
 import static java.lang.Boolean.FALSE;
-import static java.lang.System.getProperty;
-import static java.util.Optional.ofNullable;
 
 /**
  * Class for processing resources.
@@ -35,7 +34,7 @@ public class ResourcesProcessor {
      */
     public static void processResources(final ResourcesConfig config) {
 
-        final Boolean resourcesCompleted = ofNullable(getProperty(PROP_COMPLETED_RESOURCE)).map(Boolean::valueOf).orElse(FALSE);
+        final Boolean resourcesCompleted = getMavenPropertyValue(PROP_COMPLETED_RESOURCE).map(Boolean::valueOf).orElse(FALSE);
 
         log.info(formatColor.apply(YELLOW, "BMC-Resources Generation started."));
         log.info(formatColor.apply(YELLOW, "Processing upstream Resources."));
