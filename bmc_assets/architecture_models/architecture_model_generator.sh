@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# LICENSE:
+# Apache License
+# Version 2.0, January 2004
+# http://www.apache.org/licenses/
+#
+# Check the full license at the root of this repository
+#
+
 # - set -euo pipefail Enables strict mode:
 #       -e: exit immediately if any command fails.
 #       -u: treat unset variables as errors.
