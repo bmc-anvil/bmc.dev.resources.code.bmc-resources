@@ -2,6 +2,12 @@
 
 The origins of these models are traditional books and strategies you may find cited in the reference section on each of them.
 
+### Currently supported models:
+
+- `clean/DDD/hexa`:
+    - A blend between the three approaches that work ok for me for the moment.
+    - [click for description, design approach, folder tree view, etc.](/bmc_assets/architecture_models/clean_ddd_hexa/clean_ddd_hexa.md)
+
 ## What
 
 ### Each subfolder under `architecture_models` holds an architecture design model / strategy by name.

@@ -235,8 +235,38 @@ Values:
 - Required: false
 - Behavior: by default, user resources are written once and left alone.
     - Setting this to true will overwrite the user resources.
+    - Among those resources is the maven.config file which sets properties to indicate what is completed. So overwriting user resources will regenerate the
+      architecture.
 
 > Note: Although this is a destructive operation with no undo, in a standard setup vcs or the ide will track the history of changes.
 >
 > This vcs/ide possibility is an assumption that you should not consider at all if you do not track changes or made several changes to your user resources.
 
+### maven.config file entries:
+
+Maven properties can be passed via command line, or they can also be set in `.mvn/maven.config` file.
+
+The file is very convenient to persist local state and also to create repeatable runs without passing arguments to mvn command.
+
+Once the plugin finishes `successfully` copying resources and creating an architecture, it will write to properties to the file.
+
+```text
+-Dbmc.resources.completed=true
+-Dbmc.architecture.completed=true
+```
+
+They are self-descriptive indicating which step of the plugin has finished.
+
+Deleting one or both will make the plugin to run with as if it had never run before.
+<br>In case you delete both properties, the plugin will run according to the settings on the pom.
+
+In the case of the architecture step: it will recreate the whole folder structure. It is non-destructive of the contents.
+
+In the case of the resources: it will overwrite every resource. **It is destructive**.
+
+### Logs:
+
+The plugin logs enough details at the info level so you will know exactly what is happening.
+
+Every step is marked at the beginning and the end, and each resource, folder, file, etc. is also output.
+If you need more detail, run maven with the -X flag to get the debug logs too.
