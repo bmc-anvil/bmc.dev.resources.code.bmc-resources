@@ -17,25 +17,16 @@ import static bmc.dev.resources.code.bmcresources.generators.resources.Resources
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.spy;
 
 class ArchResourcesGeneratorMojoTest extends InjectorResetForTest {
 
     @Test
-    void execute_withSkipFalseAndPluginVersionChanged_shouldCreateArchitectureAndResources() {
+    void execute_withSkipFalse_shouldCreateArchitectureAndResources() {
 
-        final MavenProject       project            = createWithTestBaseDir();
-        final ArchitectureConfig architectureConfig = new ArchitectureConfig();
-        final ResourcesConfig    resourcesConfig    = new ResourcesConfig();
-        final GeneralConfig      generalConfig      = new GeneralConfig();
+        final MavenProject               project = createWithTestBaseDir();
+        final ArchResourcesGeneratorMojo mojo    = getArchResourcesGeneratorMojo(project);
 
-        generalConfig.setSkip(false);
-
-        final ArchResourcesGeneratorMojo mojo = spy(new ArchResourcesGeneratorMojo());
-        mojo.setMavenProject(project);
-        mojo.setGeneralConfig(generalConfig);
-        mojo.setArchitecture(architectureConfig);
-        mojo.setResources(resourcesConfig);
+        mojo.getGeneralConfig().setSkip(false);
 
         try (final MockedStatic<ResourcesExecution> mockedResourcesExecution = mockStatic(ResourcesExecution.class);
              final MockedStatic<ArchitectureExecution> mockedArchitectureExecution = mockStatic(ArchitectureExecution.class);
@@ -44,26 +35,18 @@ class ArchResourcesGeneratorMojoTest extends InjectorResetForTest {
             mojo.execute();
 
             mockedMavenProjectInjector.verify(() -> injectMavenProject(project));
-            mockedResourcesExecution.verify(() -> createResources(resourcesConfig));
-            mockedArchitectureExecution.verify(() -> createArchitecture(architectureConfig));
+            mockedResourcesExecution.verify(() -> createResources(mojo.getResources()));
+            mockedArchitectureExecution.verify(() -> createArchitecture(mojo.getArchitecture()));
         }
     }
 
     @Test
     void execute_withSkipTrue_shouldNotCreateAnything() {
 
-        final MavenProject       project            = createWithTestBaseDir();
-        final ArchitectureConfig architectureConfig = new ArchitectureConfig();
-        final ResourcesConfig    resourcesConfig    = new ResourcesConfig();
-        final GeneralConfig      generalConfig      = new GeneralConfig();
+        final MavenProject               project = createWithTestBaseDir();
+        final ArchResourcesGeneratorMojo mojo    = getArchResourcesGeneratorMojo(project);
 
-        generalConfig.setSkip(true);
-
-        final ArchResourcesGeneratorMojo mojo = spy(new ArchResourcesGeneratorMojo());
-        mojo.setMavenProject(project);
-        mojo.setGeneralConfig(generalConfig);
-        mojo.setArchitecture(architectureConfig);
-        mojo.setResources(resourcesConfig);
+        mojo.getGeneralConfig().setSkip(true);
 
         try (final MockedStatic<ResourcesExecution> mockedResourcesExecution = mockStatic(ResourcesExecution.class);
              final MockedStatic<ArchitectureExecution> mockedArchitectureExecution = mockStatic(ArchitectureExecution.class);
@@ -75,6 +58,19 @@ class ArchResourcesGeneratorMojoTest extends InjectorResetForTest {
             mockedResourcesExecution.verifyNoInteractions();
             mockedArchitectureExecution.verifyNoInteractions();
         }
+    }
+
+    private static ArchResourcesGeneratorMojo getArchResourcesGeneratorMojo(final MavenProject project) {
+
+        final ArchitectureConfig         architectureConfig = new ArchitectureConfig();
+        final ResourcesConfig            resourcesConfig    = new ResourcesConfig();
+        final GeneralConfig              generalConfig      = new GeneralConfig();
+        final ArchResourcesGeneratorMojo mojo               = new ArchResourcesGeneratorMojo();
+        mojo.setMavenProject(project);
+        mojo.setGeneralConfig(generalConfig);
+        mojo.setArchitecture(architectureConfig);
+        mojo.setResources(resourcesConfig);
+        return mojo;
     }
 
 }

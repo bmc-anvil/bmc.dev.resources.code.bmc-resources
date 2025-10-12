@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class MavenProjectInjectorTest extends InjectorResetForTest {
 
     @Test
-    void get_projectIsNotSet_throwsIllegalStateException() {
+    void getMavenProject_withProjectIsNotSet_throwsIllegalStateException() {
 
         assertThrows(IllegalStateException.class, MavenProjectInjector::getMavenProject);
     }
 
     @Test
-    void get_projectIsSetAndReset_returnsOriginalMavenProject() {
+    void getMavenProject_withProjectIsSetAndReset_returnsOriginalMavenProject() {
 
         final MavenProject mavenProject  = createWithTestBaseDir();
         final MavenProject mavenProject2 = createWithTestBaseDir();
@@ -31,7 +31,7 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
     }
 
     @Test
-    void get_projectIsSet_returnsMavenProject() {
+    void getMavenProject_withProjectIsSet_returnsMavenProject() {
 
         final MavenProject mavenProject = createWithTestBaseDir();
         injectMavenProject(mavenProject);
@@ -40,17 +40,7 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
     }
 
     @Test
-    void reset_projectIsSet_returnsNullMavenProject() {
-
-        final MavenProject mavenProject = createWithTestBaseDir();
-        injectMavenProject(mavenProject);
-        reset();
-
-        assertThrows(IllegalStateException.class, MavenProjectInjector::getMavenProject);
-    }
-
-    @Test
-    void set_projectIsAlreadySet_returnsFalse() {
+    void injectMavenProject_withProjectIsAlreadySet_returnsFalse() {
 
         final MavenProject mavenProject    = createWithTestBaseDir();
         final MavenProject mavenProject2   = createWithTestBaseDir();
@@ -64,7 +54,7 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
     }
 
     @Test
-    void set_projectIsNotNull_returnsTrue() {
+    void injectMavenProject_withProjectIsNotNull_returnsTrue() {
 
         final MavenProject mavenProject    = createWithTestBaseDir();
         final boolean      injectionResult = injectMavenProject(mavenProject);
@@ -74,9 +64,19 @@ class MavenProjectInjectorTest extends InjectorResetForTest {
     }
 
     @Test
-    void set_projectIsNull_throwsIllegalArgumentException() {
+    void injectMavenProject_withProjectIsNull_throwsIllegalArgumentException() {
 
         assertThrows(IllegalArgumentException.class, () -> injectMavenProject(null));
+    }
+
+    @Test
+    void reset_withProjectIsSet_returnsNullMavenProject() {
+
+        final MavenProject mavenProject = createWithTestBaseDir();
+        injectMavenProject(mavenProject);
+        reset();
+
+        assertThrows(IllegalStateException.class, MavenProjectInjector::getMavenProject);
     }
 
 }

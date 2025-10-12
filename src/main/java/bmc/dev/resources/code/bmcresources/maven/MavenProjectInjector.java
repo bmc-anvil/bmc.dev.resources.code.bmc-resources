@@ -47,14 +47,6 @@ public class MavenProjectInjector {
     }
 
     /**
-     * Resets the maven project by setting it to null.
-     */
-    public static void reset() {
-
-        ATOMIC_MAVEN_PROJECT.set(null);
-    }
-
-    /**
      * Sets the MOJO's {@link MavenProject}.
      * <p>
      * Although this should be set only once with a single mavenProject, precautions are in place to avoid possible problems in the future.
@@ -72,6 +64,14 @@ public class MavenProjectInjector {
         }
 
         return isSet;
+    }
+
+    /**
+     * Resets the maven project by setting it to null.
+     */
+    public static void reset() {
+
+        ATOMIC_MAVEN_PROJECT.set(null);
     }
 
 }

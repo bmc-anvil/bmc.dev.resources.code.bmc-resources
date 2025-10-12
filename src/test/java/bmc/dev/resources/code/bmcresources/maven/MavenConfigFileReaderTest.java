@@ -1,16 +1,15 @@
 package bmc.dev.resources.code.bmcresources.maven;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import bmc.dev.resources.code.support.InjectorResetForTest;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import static bmc.dev.resources.code.bmcresources.Constants.PROP_COMPLETED_ARCH;
@@ -24,24 +23,63 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 
-@ExtendWith(MockitoExtension.class)
 @Slf4j
 class MavenConfigFileReaderTest extends InjectorResetForTest {
 
     @Test
-    void fileDoesNotExist_returnsEmptyOptional() {
+    void getMavenPropertyValue_withErrorReadingFile_shouldThrow() {
+
+        final MavenProject project              = createWithTestBaseDir();
+        final String       expectedErrorMessage = "Simulated Error Message";
+        injectMavenProject(project);
+        writeMavenProperty(PROP_COMPLETED_ARCH, "true");
+
+        try (final MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+            mockedFiles.when(() -> exists(any())).thenThrow(new RuntimeException(new IOException(expectedErrorMessage)));
+
+            final RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> getMavenPropertyValue(PROP_COMPLETED_ARCH));
+            assertInstanceOf(IOException.class, runtimeException.getCause().getCause());
+            assertEquals(expectedErrorMessage, runtimeException.getCause().getCause().getMessage());
+        }
+    }
+
+    @Test
+    void getMavenPropertyValue_withFileDoesNotExist_shouldReturnEmpty() {
 
         final MavenProject project = createWithTestBaseDir();
 
         injectMavenProject(project);
 
-        final Optional<String> mavenPropertyResult = getMavenPropertyValue("not.exists");
+        try (final MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+            mockedFiles.when(() -> exists(any())).thenReturn(false);
 
-        assertTrue(mavenPropertyResult.isEmpty());
+            final Optional<String> mavenPropertyValue = getMavenPropertyValue(PROP_COMPLETED_ARCH);
+
+            assertTrue(mavenPropertyValue.isEmpty());
+        }
     }
 
     @Test
-    void propertyDoesExist_returnsTheValue() {
+    void getMavenPropertyValue_withInvalidProperty_shouldReturnEmpty() {
+
+        final MavenProject project = createWithTestBaseDir();
+        injectMavenProject(project);
+        final String       expectedValue = "value";
+        final List<String> lines         = List.of(PROP_COMPLETED_ARCH + "=" + expectedValue + "=should=work");
+
+        try (final MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
+            mockedFiles.when(() -> exists(any())).thenReturn(true);
+            mockedFiles.when(() -> readAllLines(any(), any())).thenReturn(lines);
+
+            final Optional<String> mavenPropertyValue = getMavenPropertyValue(PROP_COMPLETED_ARCH);
+
+            assertFalse(mavenPropertyValue.isEmpty());
+            assertEquals(expectedValue, mavenPropertyValue.get());
+        }
+    }
+
+    @Test
+    void getMavenPropertyValue_withPropertyDoesExist_shouldReturnTheValue() {
 
         final MavenProject project       = createWithTestBaseDir();
         final String       propertyValue = "true";
@@ -55,20 +93,14 @@ class MavenConfigFileReaderTest extends InjectorResetForTest {
         assertEquals(propertyValue, mavenPropertyResult.get());
     }
 
-    @SneakyThrows
     @Test
-    void propertyDoesExists_malformedFormat_throws() {
+    void getMavenPropertyValue_withPropertyDoesExists_withMalformedFormat_shouldThrow() {
 
         final MavenProject project              = createWithTestBaseDir();
         final String       expectedErrorMessage = "Simulated Error Message";
         injectMavenProject(project);
         writeMavenProperty(PROP_COMPLETED_ARCH, "true");
 
-        /*
-         * NOTE for the future:
-         * When mocking static, all methods of the mocked class are intercepted and will return whatever default for the return type.
-         * In this case Files.exists() will always return false, unless a when instruction configures it to do otherwise.
-         */
         try (final MockedStatic<Files> mockedFiles = mockStatic(Files.class)) {
             mockedFiles.when(() -> exists(any())).thenReturn(true);
             mockedFiles.when(() -> readAllLines(any(), any())).thenThrow(new ArrayIndexOutOfBoundsException(expectedErrorMessage));
@@ -80,7 +112,7 @@ class MavenConfigFileReaderTest extends InjectorResetForTest {
     }
 
     @Test
-    void propertyDoesNotExist_returnsEmptyOptional() {
+    void getMavenPropertyValue_withPropertyDoesNotExist_shouldReturnEmptyOptional() {
 
         final MavenProject project       = createWithTestBaseDir();
         final String       propertyValue = "true";
