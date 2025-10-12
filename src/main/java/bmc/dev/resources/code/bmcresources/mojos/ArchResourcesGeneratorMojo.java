@@ -26,7 +26,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURC
  * Architecture design and resources files are packaged in the plugin itself, so no connectivity is required after the initial download.
  */
 @Slf4j
-@Mojo(name = "generate-architecture", defaultPhase = GENERATE_SOURCES, threadSafe = true)
+@Mojo(name = "generate", defaultPhase = GENERATE_SOURCES, threadSafe = true)
 @Setter
 @Getter
 public class ArchResourcesGeneratorMojo extends AbstractMojo {
