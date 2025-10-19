@@ -46,7 +46,7 @@ public class ArchDesignProcessor {
         } else {
 
             log.info(formatColor.apply(YELLOW, ("Architecture Structure creation started.")));
-            logArchitectureConfiguration(config);
+            logArchitectureConfiguration(config, log);
 
             extractConfigFileEntries(getArchStructureFile.apply(config.getModel()), extractArchitectureModel)
                     .ifPresent(architectureEntries -> {

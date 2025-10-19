@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
 
 import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
 import bmc.dev.resources.code.bmcresources.config.ArchitectureEntry;
@@ -65,21 +66,22 @@ public class ArchDesignUtils {
      * Logs detailed information about the architecture configuration.
      *
      * @param config the {@link ArchitectureConfig} object containing parameters for the architecture structure generation:
+     * @param logger the logger to use for this logging task.
      */
-    public static void logArchitectureConfiguration(final ArchitectureConfig config) {
+    public static void logArchitectureConfiguration(final ArchitectureConfig config, final Logger logger) {
 
         final MavenProject mavenProject = getMavenProject();
 
-        log.info(formatBoldColor.apply(BLUE, "Architecture Structure configuration:"));
-        log.info(formatColor.apply(BLUE, " --- skip: [{}]"), config.isSkip());
-        log.info(formatColor.apply(BLUE, " --- skipReadmes: [{}]"), config.isSkipReadme());
-        log.info(formatColor.apply(BLUE, " --- model: [{}]"), config.getModel());
-        log.info(formatColor.apply(BLUE, " --- mainReadme: [{}]"), ofNullable(config.getMainReadme()).orElse(config.getModel()));
-        log.info(formatColor.apply(BLUE, " --- artifactId: [{}]"), mavenProject.getArtifactId());
-        log.info(formatColor.apply(BLUE, " --- groupId: [{}]"), mavenProject.getGroupId());
-        log.info(formatColor.apply(BLUE, " --- mavenSourceDirectory: [{}]"), mavenProject.getBuild().getSourceDirectory());
-        log.info(formatColor.apply(BLUE, " --- archTargetDirectory: [{}]"), buildBaseTargetPathForArch());
-        log.info("");
+        logger.info(formatBoldColor.apply(BLUE, "Architecture Structure configuration:"));
+        logger.info(formatColor.apply(BLUE, " --- skip: [{}]"), config.isSkip());
+        logger.info(formatColor.apply(BLUE, " --- skipReadmes: [{}]"), config.isSkipReadme());
+        logger.info(formatColor.apply(BLUE, " --- model: [{}]"), config.getModel());
+        logger.info(formatColor.apply(BLUE, " --- mainReadme: [{}]"), ofNullable(config.getMainReadme()).orElse(config.getModel()));
+        logger.info(formatColor.apply(BLUE, " --- artifactId: [{}]"), mavenProject.getArtifactId());
+        logger.info(formatColor.apply(BLUE, " --- groupId: [{}]"), mavenProject.getGroupId());
+        logger.info(formatColor.apply(BLUE, " --- mavenSourceDirectory: [{}]"), mavenProject.getBuild().getSourceDirectory());
+        logger.info(formatColor.apply(BLUE, " --- archTargetDirectory: [{}]"), buildBaseTargetPathForArch());
+        logger.info("");
     }
 
     /**

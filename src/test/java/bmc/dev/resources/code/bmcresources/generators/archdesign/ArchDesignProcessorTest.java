@@ -28,7 +28,7 @@ class ArchDesignProcessorTest {
 
             processArchitecture(architectureConfig);
 
-            mockedArchUtils.verify(() -> logArchitectureConfiguration(any()), times(1));
+            mockedArchUtils.verify(() -> logArchitectureConfiguration(any(), any()), times(1));
             mockedBMCFileReader.verify(() -> extractConfigFileEntries(any(), any()), times(1));
             mockedArchUtils.verify(() -> processArchitectureOnly(any(), any()), never());
             mockedArchUtils.verify(() -> processArchitectureAndReadme(any(), any(), any()), times(1));
@@ -49,7 +49,7 @@ class ArchDesignProcessorTest {
 
             processArchitecture(architectureConfig);
 
-            mockedArchUtils.verify(() -> logArchitectureConfiguration(any()), times(1));
+            mockedArchUtils.verify(() -> logArchitectureConfiguration(any(), any()), times(1));
             mockedBMCFileReader.verify(() -> extractConfigFileEntries(any(), any()), times(1));
             mockedArchUtils.verify(() -> processArchitectureOnly(any(), any()), times(1));
             mockedArchUtils.verify(() -> processArchitectureAndReadme(any(), any(), any()), never());

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,7 +13,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import bmc.dev.resources.code.bmcresources.config.ArchitectureConfig;
 import bmc.dev.resources.code.bmcresources.config.ArchitectureEntry;
@@ -27,7 +25,6 @@ import static bmc.dev.resources.code.bmcresources.io.IOUtilities.createDirectori
 import static bmc.dev.resources.code.bmcresources.maven.MavenProjectInjector.injectMavenProject;
 import static bmc.dev.resources.code.bmcresources.utils.BMCConfigFileUtils.calculateLeftAlignedPadding;
 import static bmc.dev.resources.code.support.DummyProjectForTest.createWithTestBaseDir;
-import static java.lang.Integer.MIN_VALUE;
 import static java.util.Optional.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,10 +53,11 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
 
     @SuppressWarnings({"checkstyle:MethodLength", "checkstyle:MagicNumber"})
     @Test
-    @Order(MIN_VALUE)
     void logArchitectureConfiguration_shouldCorrectlyLogConfiguration() {
 
-        final MavenProject            project              = createWithTestBaseDir();
+        final MavenProject project = createWithTestBaseDir();
+        injectMavenProject(project);
+
         final ArchitectureConfig      architectureConfig   = new ArchitectureConfig();
         final Logger                  mockedLogger         = mock(Logger.class);
         final ArgumentCaptor<String>  messageCaptorString  = forClass(String.class);
@@ -71,37 +69,31 @@ class ArchDesignUtilsTest extends InjectorResetForTest {
         architectureConfig.setSkip(true);
         architectureConfig.setSkipReadme(false);
 
-        injectMavenProject(project);
+        logArchitectureConfiguration(architectureConfig, mockedLogger);
 
-        try (final MockedStatic<LoggerFactory> mockedLoggerFactory = mockStatic(org.slf4j.LoggerFactory.class)) {
-            mockedLoggerFactory.when(() -> LoggerFactory.getLogger(ArchDesignUtils.class)).thenReturn(mockedLogger);
+        verify(mockedLogger, times(2)).info(anyString());
+        verify(mockedLogger, times(2)).info(anyString(), anyBoolean());
+        verify(mockedLogger, times(5)).info(anyString(), anyString());
+        verify(mockedLogger, times(1)).info(anyString(), any(Path.class));
 
-            logArchitectureConfiguration(architectureConfig);
+        verify(mockedLogger, atLeastOnce()).info(messageCaptorString.capture());
+        verify(mockedLogger, atLeastOnce()).info(messageCaptorString.capture(), messageCaptorString.capture());
+        verify(mockedLogger, atLeastOnce()).info(messageCaptorString.capture(), messageCaptorBoolean.capture());
+        verify(mockedLogger, atLeastOnce()).info(messageCaptorString.capture(), messageCaptorPath.capture());
 
-            verify(mockedLogger, times(2)).info(anyString());
-            verify(mockedLogger, times(2)).info(anyString(), anyBoolean());
-            verify(mockedLogger, times(5)).info(anyString(), anyString());
-            verify(mockedLogger, times(1)).info(anyString(), any(Path.class));
+        assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains("Architecture Structure configuration")));
+        assertTrue(messageCaptorString.getAllValues().stream().anyMatch(String::isEmpty));
 
-            verify(mockedLogger, atLeastOnce()).info(messageCaptorString.capture());
-            verify(mockedLogger, atLeastOnce()).info(messageCaptorString.capture(), messageCaptorString.capture());
-            verify(mockedLogger, atLeastOnce()).info(messageCaptorString.capture(), messageCaptorBoolean.capture());
-            verify(mockedLogger, atLeastOnce()).info(messageCaptorString.capture(), messageCaptorPath.capture());
+        assertEquals(1, messageCaptorBoolean.getAllValues().stream().filter(trueValues -> trueValues.equals(Boolean.TRUE)).count());
+        assertEquals(1, messageCaptorBoolean.getAllValues().stream().filter(falseValues -> falseValues.equals(Boolean.FALSE)).count());
 
-            assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains("Architecture Structure configuration")));
-            assertTrue(messageCaptorString.getAllValues().stream().anyMatch(String::isEmpty));
+        assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(architectureConfig.getModel())));
+        assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(architectureConfig.getMainReadme())));
+        assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(project.getArtifactId())));
+        assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(project.getGroupId())));
+        assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(project.getBuild().getSourceDirectory())));
 
-            assertEquals(1, messageCaptorBoolean.getAllValues().stream().filter(trueValues -> trueValues.equals(Boolean.TRUE)).count());
-            assertEquals(1, messageCaptorBoolean.getAllValues().stream().filter(falseValues -> falseValues.equals(Boolean.FALSE)).count());
-
-            assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(architectureConfig.getModel())));
-            assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(architectureConfig.getMainReadme())));
-            assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(project.getArtifactId())));
-            assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(project.getGroupId())));
-            assertTrue(messageCaptorString.getAllValues().stream().anyMatch(message -> message.contains(project.getBuild().getSourceDirectory())));
-
-            assertTrue(messageCaptorPath.getAllValues().stream().anyMatch(message -> message.equals(buildBaseTargetPathForArch())));
-        }
+        assertTrue(messageCaptorPath.getAllValues().stream().anyMatch(message -> message.equals(buildBaseTargetPathForArch())));
 
     }
 
